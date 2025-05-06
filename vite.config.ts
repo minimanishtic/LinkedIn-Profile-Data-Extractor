@@ -26,4 +26,9 @@ export default defineConfig({
     // @ts-ignore
     allowedHosts: true,
   },
+  build: {
+    rollupOptions: {
+      external: process.env.NODE_ENV === "production" ? ["tempo-routes"] : [],
+    },
+  },
 });
