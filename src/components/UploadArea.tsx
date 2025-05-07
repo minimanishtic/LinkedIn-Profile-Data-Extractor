@@ -213,13 +213,13 @@ const UploadArea = ({
         whileHover={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
       >
         {selectedFiles.length === 0 ? (
-          <motion.div 
+          <motion.div
             className="flex flex-col items-center justify-center py-10 text-center"
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <motion.div 
+            <motion.div
               className="mb-6 p-5 rounded-full bg-blue-50"
               whileHover={{ scale: 1.05, backgroundColor: "#e1f0ff" }}
               whileTap={{ scale: 0.95 }}
@@ -240,10 +240,7 @@ const UploadArea = ({
               or click to browse (PNG, JPG only
               {multiple ? ", max " + maxFiles + " files" : ""})
             </p>
-            <motion.div
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-            >
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <Button
                 onClick={handleButtonClick}
                 variant="outline"
@@ -264,7 +261,7 @@ const UploadArea = ({
             />
           </motion.div>
         ) : multiple ? (
-          <motion.div 
+          <motion.div
             className="w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -275,7 +272,10 @@ const UploadArea = ({
                 {selectedFiles.length}{" "}
                 {selectedFiles.length === 1 ? "file" : "files"} selected
               </h3>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Button
                   variant="ghost"
                   size="sm"
@@ -323,8 +323,8 @@ const UploadArea = ({
                           </p>
                         </div>
                       </div>
-                      <motion.div 
-                        whileHover={{ scale: 1.1, rotate: 90 }} 
+                      <motion.div
+                        whileHover={{ scale: 1.1, rotate: 90 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <Button
@@ -344,7 +344,7 @@ const UploadArea = ({
             </ScrollArea>
           </motion.div>
         ) : (
-          <motion.div 
+          <motion.div
             className="w-full"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -379,7 +379,7 @@ const UploadArea = ({
                 </Button>
               </motion.div>
             </div>
-            <motion.p 
+            <motion.p
               className="mt-3 text-sm text-center text-gray-500 font-medium"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -393,7 +393,7 @@ const UploadArea = ({
 
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-md w-full flex items-start gap-2 shadow-sm border border-red-100"
               initial={{ opacity: 0, height: 0, y: -10 }}
               animate={{ opacity: 1, height: "auto", y: 0 }}
@@ -407,7 +407,7 @@ const UploadArea = ({
               >
                 <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
               </motion.div>
-              <motion.p 
+              <motion.p
                 className="flex-1"
                 initial={{ opacity: 0, x: -5 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -418,7 +418,7 @@ const UploadArea = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
     </Card>
   );
 };
