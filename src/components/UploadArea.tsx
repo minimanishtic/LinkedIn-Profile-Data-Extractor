@@ -3,6 +3,7 @@ import { Upload, ImageIcon, X, AlertCircle } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { ScrollArea } from "./ui/scroll-area";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface UploadAreaProps {
   onFileSelect: (files: File[] | null) => void;
@@ -199,36 +200,59 @@ const UploadArea = ({
   };
 
   return (
-    <Card className="w-full max-w-[600px] bg-white">
-      <div
-        className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg transition-colors ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"} ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
+    <Card className="w-full max-w-[600px] bg-white shadow-lg overflow-hidden rounded-xl block-content">
+      <motion.div
+        className={`relative flex flex-col items-center justify-center p-8 md:p-10 border-2 border-dashed rounded-xl transition-all duration-300 ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"} ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
         onDragEnter={disabled ? undefined : handleDragEnter}
         onDragLeave={disabled ? undefined : handleDragLeave}
         onDragOver={disabled ? undefined : handleDragOver}
         onDrop={disabled ? undefined : handleDrop}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        whileHover={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)" }}
       >
         {selectedFiles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="mb-4 p-4 rounded-full bg-blue-50">
-              <Upload className="h-10 w-10 text-blue-600" />
-            </div>
-            <h3 className="mb-2 text-lg font-medium text-gray-900">
+          <motion.div 
+            className="flex flex-col items-center justify-center py-10 text-center"
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <motion.div 
+              className="mb-6 p-5 rounded-full bg-blue-50"
+              whileHover={{ scale: 1.05, backgroundColor: "#e1f0ff" }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <motion.div
+                animate={{ rotate: isDragging ? [0, -10, 10, -10, 0] : 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Upload className="h-12 w-12 text-blue-600" />
+              </motion.div>
+            </motion.div>
+            <h3 className="mb-3 text-xl font-medium text-gray-900">
               {multiple
                 ? "Drag & Drop LinkedIn Screenshots"
                 : "Drag & Drop LinkedIn Screenshot"}
             </h3>
-            <p className="mb-4 text-sm text-gray-500">
+            <p className="mb-6 text-sm text-gray-500">
               or click to browse (PNG, JPG only
               {multiple ? ", max " + maxFiles + " files" : ""})
             </p>
-            <Button
-              onClick={handleButtonClick}
-              variant="outline"
-              className="border-blue-600 text-blue-600 hover:bg-blue-50"
-              disabled={disabled}
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
-              Select {multiple ? "Files" : "File"}
-            </Button>
+              <Button
+                onClick={handleButtonClick}
+                variant="outline"
+                className="border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-2 rounded-full"
+                disabled={disabled}
+              >
+                Select {multiple ? "Files" : "File"}
+              </Button>
+            </motion.div>
             <input
               ref={fileInputRef}
               type="file"
@@ -238,96 +262,162 @@ const UploadArea = ({
               multiple={multiple}
               disabled={disabled}
             />
-          </div>
+          </motion.div>
         ) : multiple ? (
-          <div className="w-full">
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-md font-medium text-gray-900">
+          <motion.div 
+            className="w-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium text-gray-900">
                 {selectedFiles.length}{" "}
                 {selectedFiles.length === 1 ? "file" : "files"} selected
               </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-500 hover:text-red-500"
-                onClick={handleClearSelection}
-                disabled={disabled}
-              >
-                Clear all
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-500 hover:text-red-500"
+                  onClick={handleClearSelection}
+                  disabled={disabled}
+                >
+                  Clear all
+                </Button>
+              </motion.div>
             </div>
 
-            <ScrollArea className="h-[250px] w-full rounded-md border">
-              <div className="p-2 space-y-2">
-                {selectedFiles.map((file) => (
-                  <div
-                    key={file.name}
-                    className="flex items-center justify-between p-2 bg-gray-50 rounded-md"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="h-10 w-10 bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
-                        {previewUrls.has(file.name) && (
-                          <img
-                            src={previewUrls.get(file.name)}
-                            alt={file.name}
-                            className="h-full w-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {file.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {(file.size / 1024 / 1024).toFixed(2)}MB
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 rounded-full"
-                      onClick={() => handleRemoveFile(file.name)}
-                      disabled={disabled}
+            <ScrollArea className="h-[280px] w-full rounded-lg border shadow-inner bg-gray-50/50">
+              <div className="p-3 space-y-3">
+                <AnimatePresence>
+                  {selectedFiles.map((file) => (
+                    <motion.div
+                      key={file.name}
+                      className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm border border-gray-100"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -100 }}
+                      transition={{ duration: 0.2 }}
+                      whileHover={{ backgroundColor: "#f9fafb", y: -2 }}
                     >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
+                      <div className="flex items-center space-x-3">
+                        <div className="h-12 w-12 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0 shadow-inner">
+                          {previewUrls.has(file.name) && (
+                            <motion.img
+                              src={previewUrls.get(file.name)}
+                              alt={file.name}
+                              className="h-full w-full object-cover"
+                              initial={{ scale: 1.2 }}
+                              animate={{ scale: 1 }}
+                              transition={{ duration: 0.3 }}
+                            />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {file.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {(file.size / 1024 / 1024).toFixed(2)}MB
+                          </p>
+                        </div>
+                      </div>
+                      <motion.div 
+                        whileHover={{ scale: 1.1, rotate: 90 }} 
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 rounded-full hover:bg-red-50 hover:text-red-500"
+                          onClick={() => handleRemoveFile(file.name)}
+                          disabled={disabled}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             </ScrollArea>
-          </div>
+          </motion.div>
         ) : (
-          <div className="w-full">
-            <div className="relative">
-              <img
+          <motion.div 
+            className="w-full"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className="relative overflow-hidden rounded-lg shadow-md">
+              <motion.img
                 src={previewUrls.get(selectedFiles[0]?.name) || ""}
                 alt="Preview"
                 className="w-full h-auto max-h-[300px] object-contain rounded-md"
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                whileHover={{ scale: 1.02 }}
               />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full"
-                onClick={handleClearSelection}
-                disabled={disabled}
+              <motion.div
+                className="absolute top-2 right-2"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
-                <X className="h-4 w-4" />
-              </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="bg-white/80 hover:bg-white rounded-full shadow-sm"
+                  onClick={handleClearSelection}
+                  disabled={disabled}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </motion.div>
             </div>
-            <p className="mt-2 text-sm text-center text-gray-500">
+            <motion.p 
+              className="mt-3 text-sm text-center text-gray-500 font-medium"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.3 }}
+            >
               {selectedFiles[0]?.name} (
               {(selectedFiles[0]?.size / 1024 / 1024).toFixed(2)}MB)
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
         )}
 
-        {error && (
-          <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-md w-full flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-            <p className="flex-1">{error}</p>
-          </div>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.div 
+              className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-md w-full flex items-start gap-2 shadow-sm border border-red-100"
+              initial={{ opacity: 0, height: 0, y: -10 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1, rotate: [0, 15, 0] }}
+                transition={{ delay: 0.2, duration: 0.4 }}
+              >
+                <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+              </motion.div>
+              <motion.p 
+                className="flex-1"
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.3 }}
+              >
+                {error}
+              </motion.p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </Card>
   );

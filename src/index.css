@@ -1,76 +1,162 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  @layer base {
-    :root {
-      --background: 0 0% 100%;
-      --foreground: 222.2 84% 4.9%;
+/* Import variable fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 
-      --card: 0 0% 100%;
-      --card-foreground: 222.2 84% 4.9%;
+@layer base {
+  :root {
+    /* Base colors */
+    --background: 30 30% 98%;
+    --foreground: 20 10% 15%;
 
-      --popover: 0 0% 100%;
-      --popover-foreground: 222.2 84% 4.9%;
+    --card: 30 30% 98%;
+    --card-foreground: 20 10% 15%;
 
-      --primary: 222.2 47.4% 11.2%;
-      --primary-foreground: 210 40% 98%;
+    --popover: 30 30% 98%;
+    --popover-foreground: 20 10% 15%;
 
-      --secondary: 210 40% 96.1%;
-      --secondary-foreground: 222.2 47.4% 11.2%;
+    /* LinkedIn-inspired primary color with Mocha Mousse influence */
+    --primary: 15 16% 46%;
+    --primary-foreground: 30 30% 98%;
+    --primary-50: 15 30% 97%;
+    --primary-100: 14 25% 94%;
+    --primary-200: 14 20% 88%;
+    --primary-300: 15 18% 75%;
+    --primary-400: 15 17% 60%;
+    --primary-500: 15 16% 46%;
+    --primary-600: 15 20% 38%;
+    --primary-700: 15 25% 30%;
+    --primary-800: 15 28% 22%;
+    --primary-900: 15 30% 15%;
+    --primary-950: 15 35% 8%;
 
-      --muted: 210 40% 96.1%;
-      --muted-foreground: 215.4 16.3% 46.9%;
+    --secondary: 25 25% 94%;
+    --secondary-foreground: 15 16% 46%;
 
-      --accent: 210 40% 96.1%;
-      --accent-foreground: 222.2 47.4% 11.2%;
+    --muted: 25 25% 94%;
+    --muted-foreground: 15 10% 45%;
 
-      --destructive: 0 84.2% 60.2%;
-      --destructive-foreground: 210 40% 98%;
+    --accent: 15 30% 90%;
+    --accent-foreground: 15 16% 46%;
 
-      --border: 214.3 31.8% 91.4%;
-      --input: 214.3 31.8% 91.4%;
-      --ring: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 30 30% 98%;
 
-      --radius: 0.5rem;
-    }
+    --border: 20 15% 90%;
+    --input: 20 15% 90%;
+    --ring: 15 16% 46%;
 
-    .dark {
-      --background: 222.2 84% 4.9%;
-      --foreground: 210 40% 98%;
-
-      --card: 222.2 84% 4.9%;
-      --card-foreground: 210 40% 98%;
-
-      --popover: 222.2 84% 4.9%;
-      --popover-foreground: 210 40% 98%;
-
-      --primary: 210 40% 98%;
-      --primary-foreground: 222.2 47.4% 11.2%;
-
-      --secondary: 217.2 32.6% 17.5%;
-      --secondary-foreground: 210 40% 98%;
-
-      --muted: 217.2 32.6% 17.5%;
-      --muted-foreground: 215 20.2% 65.1%;
-
-      --accent: 217.2 32.6% 17.5%;
-      --accent-foreground: 210 40% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 210 40% 98%;
-
-      --border: 217.2 32.6% 17.5%;
-      --input: 217.2 32.6% 17.5%;
-      --ring: 212.7 26.8% 83.9%;
-    }
+    --radius: 1rem;
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
+  .dark {
+    --background: 20 14% 8%;
+    --foreground: 30 10% 92%;
+
+    --card: 20 14% 10%;
+    --card-foreground: 30 10% 92%;
+
+    --popover: 20 14% 10%;
+    --popover-foreground: 30 10% 92%;
+
+    --primary: 15 16% 46%;
+    --primary-foreground: 30 10% 98%;
+    --primary-50: 15 30% 15%;
+    --primary-100: 15 28% 20%;
+    --primary-200: 15 25% 25%;
+    --primary-300: 15 20% 30%;
+    --primary-400: 15 18% 38%;
+    --primary-500: 15 16% 46%;
+    --primary-600: 15 15% 55%;
+    --primary-700: 15 14% 65%;
+    --primary-800: 14 15% 75%;
+    --primary-900: 14 20% 85%;
+    --primary-950: 14 25% 95%;
+
+    --secondary: 15 10% 20%;
+    --secondary-foreground: 30 10% 92%;
+
+    --muted: 15 10% 20%;
+    --muted-foreground: 15 10% 70%;
+
+    --accent: 15 10% 25%;
+    --accent-foreground: 30 10% 92%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 30 10% 92%;
+
+    --border: 15 10% 25%;
+    --input: 15 10% 25%;
+    --ring: 15 16% 55%;
   }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif font-bold tracking-tight;
+  }
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+  p {
+    @apply font-sans;
+  }
+  button,
+  a.btn {
+    @apply transition-all duration-300;
+  }
+
+  /* Increased spacing for better readability */
+  .container {
+    @apply px-6 md:px-8 lg:px-12;
+  }
+
+  section {
+    @apply py-12 md:py-16 lg:py-24;
+  }
+
+  /* Block-based design spacing */
+  .block-container {
+    @apply my-12 md:my-16 lg:my-24;
+  }
+
+  .block-content {
+    @apply p-6 md:p-8 lg:p-10;
+  }
+}
+
+@layer components {
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  .input-focus {
+    @apply focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-all duration-300;
+  }
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-600 active:bg-primary-700 text-primary-foreground rounded-full px-6 py-3 font-medium transition-all duration-300;
+  }
+  .btn-secondary {
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-full px-6 py-3 font-medium transition-all duration-300;
+  }
+}

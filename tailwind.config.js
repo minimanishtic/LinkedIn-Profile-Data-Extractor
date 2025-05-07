@@ -2,10 +2,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -26,6 +26,17 @@ module.exports = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          50: "hsl(var(--primary-50))",
+          100: "hsl(var(--primary-100))",
+          200: "hsl(var(--primary-200))",
+          300: "hsl(var(--primary-300))",
+          400: "hsl(var(--primary-400))",
+          500: "hsl(var(--primary-500))",
+          600: "hsl(var(--primary-600))",
+          700: "hsl(var(--primary-700))",
+          800: "hsl(var(--primary-800))",
+          900: "hsl(var(--primary-900))",
+          950: "hsl(var(--primary-950))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -51,11 +62,32 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        mocha: {
+          light: "#A18276",
+          DEFAULT: "#8B6E63",
+          dark: "#6D5750",
+        },
+        warm: {
+          beige: "#F5F0EB",
+          cream: "#F9F4F0",
+          sand: "#E8DFD8",
+          clay: "#D4C3B8",
+        },
+      },
+      fontFamily: {
+        sans: ["'Inter var'", "sans-serif"],
+        serif: ["'Fraunces Variable'", "serif"],
+        display: ["'Outfit Variable'", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "calc(var(--radius) + 4px)",
+        "2xl": "calc(var(--radius) + 8px)",
+        "3xl": "1.5rem",
+        "4xl": "2rem",
+        full: "9999px",
       },
       keyframes: {
         "accordion-down": {
@@ -74,4 +106,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
