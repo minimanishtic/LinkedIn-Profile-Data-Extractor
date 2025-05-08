@@ -29,6 +29,14 @@ export default defineConfig({
   build: {
     rollupOptions: {
       external: process.env.NODE_ENV === "production" ? ["tempo-routes"] : [],
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+      },
     },
+    chunkSizeWarningLimit: 800,
   },
 });
