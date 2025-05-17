@@ -144,11 +144,11 @@ const StatusFeedback = ({
       {status === "uploading" && (
         <div className="space-y-2">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium text-blue-600 flex items-center">
+            <span className="text-sm font-medium text-primary-600 flex items-center">
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               Uploading...
             </span>
-            <span className="text-sm font-medium text-blue-600">
+            <span className="text-sm font-medium text-primary-600">
               {Math.round(progress)}%
             </span>
           </div>

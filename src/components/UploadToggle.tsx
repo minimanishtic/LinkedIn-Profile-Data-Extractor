@@ -8,20 +8,20 @@ interface UploadToggleProps {
 
 const UploadToggle = ({ mode = "single", onModeChange }: UploadToggleProps) => {
   return (
-    <div className="flex w-full max-w-[600px] bg-white rounded-lg overflow-hidden mb-4 border">
+    <div className="flex w-full max-w-[600px] bg-white rounded-xl overflow-hidden mb-4 border border-gray-100 p-1">
       <Button
         variant={mode === "single" ? "default" : "ghost"}
-        className={`flex-1 rounded-none py-6 ${mode === "single" ? "bg-[#0077B5] text-white" : "text-gray-600"}`}
+        className={`flex-1 rounded-lg py-4 ${mode === "single" ? "bg-primary text-white shadow-md" : "text-gray-600 hover:bg-gray-50"}`}
         onClick={() => onModeChange("single")}
       >
-        Upload Single LinkedIn SS
+        Single Upload
       </Button>
       <Button
         variant={mode === "bulk" ? "default" : "ghost"}
-        className={`flex-1 rounded-none py-6 ${mode === "bulk" ? "bg-[#0077B5] text-white" : "text-gray-600"}`}
+        className={`flex-1 rounded-lg py-4 ${mode === "bulk" ? "bg-primary text-white shadow-md" : "text-gray-600 hover:bg-gray-50"}`}
         onClick={() => onModeChange("bulk")}
       >
-        Upload Multiple LinkedIn SS
+        Bulk Upload
       </Button>
     </div>
   );

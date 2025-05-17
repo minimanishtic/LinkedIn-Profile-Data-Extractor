@@ -437,7 +437,7 @@ export default function Home() {
             href="https://docs.google.com/spreadsheets/d/example"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center text-[#0077B5] hover:text-[#006097] font-medium"
+            className="flex items-center text-primary-600 hover:text-primary-700 font-medium"
           >
             <span className="mr-1">View Results in Google Sheets</span>
             <svg

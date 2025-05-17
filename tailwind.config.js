@@ -63,15 +63,15 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
         mocha: {
-          light: "#A18276",
-          DEFAULT: "#8B6E63",
-          dark: "#6D5750",
+          light: "#3B82F6",
+          DEFAULT: "#2563EB",
+          dark: "#1D4ED8",
         },
         warm: {
-          beige: "#F5F0EB",
-          cream: "#F9F4F0",
-          sand: "#E8DFD8",
-          clay: "#D4C3B8",
+          beige: "#EFF6FF",
+          cream: "#DBEAFE",
+          sand: "#BFDBFE",
+          clay: "#93C5FD",
         },
       },
       fontFamily: {
