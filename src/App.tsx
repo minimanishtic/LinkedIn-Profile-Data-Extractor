@@ -6,7 +6,7 @@ import Home from "./components/home";
 function App() {
   return (
     <Suspense fallback={<p>Loading...</p>}>
-      <>
+      <div>
         <Analytics />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -15,7 +15,7 @@ function App() {
             <Route path="/tempobook/*" />
           )}
         </Routes>
-      </>
+      </div>
     </Suspense>
   );
 }
