@@ -85,7 +85,7 @@ const SubmissionForm = ({
             >
               <Button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary-700 text-white font-medium py-5 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-sm"
+                className="w-full bg-primary hover:bg-primary-dark text-white font-medium py-4 rounded-md flex items-center justify-center gap-2 transition-all duration-300"
                 disabled={disabled}
               >
                 <span>

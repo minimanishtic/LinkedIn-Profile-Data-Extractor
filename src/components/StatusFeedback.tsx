@@ -143,16 +143,16 @@ const StatusFeedback = ({
 
       {status === "uploading" && (
         <div className="space-y-2">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium text-primary-600 flex items-center">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-primary flex items-center">
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               Uploading...
             </span>
-            <span className="text-sm font-medium text-primary-600">
+            <span className="text-sm font-medium text-primary">
               {Math.round(progress)}%
             </span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-1.5" />
           {message && <p className="text-sm text-gray-500 mt-1">{message}</p>}
 
           {isBulkUpload && fileResults.length > 0 && (

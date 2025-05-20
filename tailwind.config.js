@@ -62,16 +62,22 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        mocha: {
-          light: "#3B82F6",
-          DEFAULT: "#2563EB",
-          dark: "#1D4ED8",
+        indigo: {
+          light: "#818CF8",
+          DEFAULT: "#4F46E5",
+          dark: "#3730A3",
         },
-        warm: {
-          beige: "#EFF6FF",
-          cream: "#DBEAFE",
-          sand: "#BFDBFE",
-          clay: "#93C5FD",
+        neutral: {
+          50: "#FAFAFA",
+          100: "#F5F5F5",
+          200: "#E5E5E5",
+          300: "#D4D4D4",
+          400: "#A3A3A3",
+          500: "#737373",
+          600: "#525252",
+          700: "#404040",
+          800: "#262626",
+          900: "#171717",
         },
       },
       fontFamily: {

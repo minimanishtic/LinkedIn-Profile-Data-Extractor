@@ -220,23 +220,23 @@ const UploadArea = ({
             transition={{ duration: 0.3 }}
           >
             <motion.div
-              className="mb-6 p-5 rounded-full bg-blue-50"
-              whileHover={{ scale: 1.05, backgroundColor: "#e1f0ff" }}
+              className="mb-6 p-5 rounded-full bg-primary-50"
+              whileHover={{ scale: 1.05, backgroundColor: "#e0e7ff" }}
               whileTap={{ scale: 0.95 }}
             >
               <motion.div
                 animate={{ rotate: isDragging ? [0, -10, 10, -10, 0] : 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <Upload className="h-12 w-12 text-blue-600" />
+                <Upload className="h-12 w-12 text-primary" />
               </motion.div>
             </motion.div>
-            <h3 className="mb-3 text-xl font-medium text-gray-900">
+            <h3 className="mb-3 text-xl font-medium text-neutral-900 font-display">
               {multiple
                 ? "Drag & Drop LinkedIn Screenshots"
                 : "Drag & Drop LinkedIn Screenshot"}
             </h3>
-            <p className="mb-6 text-sm text-gray-500">
+            <p className="mb-6 text-sm text-neutral-500">
               or click to browse (PNG, JPG only
               {multiple ? ", max " + maxFiles + " files" : ""})
             </p>
@@ -244,7 +244,7 @@ const UploadArea = ({
               <Button
                 onClick={handleButtonClick}
                 variant="outline"
-                className="border-primary-600 text-primary-600 hover:bg-primary-50 px-6 py-2 rounded-lg"
+                className="border-primary text-primary hover:bg-primary-50 px-6 py-2 rounded-md"
                 disabled={disabled}
               >
                 Select {multiple ? "Files" : "File"}

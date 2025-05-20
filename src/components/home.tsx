@@ -424,10 +424,11 @@ export default function Home() {
           isBulkUpload={uploadMode === "bulk"}
         />
 
-        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-gray-600">
+        <div className="mt-8 p-6 bg-neutral-50 border border-neutral-100 rounded-lg text-sm text-neutral-600">
           <p className="mb-2">
-            <strong>Disclaimer:</strong> By uploading screenshots, you confirm
-            that you have permission to process this data.
+            <span className="font-medium text-neutral-800">Disclaimer:</span> By
+            uploading screenshots, you confirm that you have permission to
+            process this data.
           </p>
           <p className="mb-4">
             Extracted data will be processed and made available in a structured
@@ -437,7 +438,7 @@ export default function Home() {
             href="https://docs.google.com/spreadsheets/d/example"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center text-primary-600 hover:text-primary-700 font-medium"
+            className="flex items-center text-primary hover:text-primary-dark font-medium"
           >
             <span className="mr-1">View Results in Google Sheets</span>
             <svg

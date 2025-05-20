@@ -109,7 +109,7 @@
   h4,
   h5,
   h6 {
-    @apply font-serif font-bold tracking-tight;
+    @apply font-display font-medium tracking-tight;
   }
   h1 {
     @apply text-4xl md:text-5xl lg:text-6xl;
