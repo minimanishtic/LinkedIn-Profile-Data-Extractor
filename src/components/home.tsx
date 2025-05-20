@@ -354,29 +354,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start p-0 bg-background">
-      {/* Full-page header with modern design */}
-      <div className="w-full bg-gradient-to-br from-warm-beige via-warm-cream to-warm-sand py-16 md:py-24 px-6 mb-12">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-6">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-primary-800 leading-tight">
-              LinkedIn Profile <span className="text-mocha">Snapshot</span>{" "}
-              Extractor
-            </h1>
-            <p className="text-lg md:text-xl text-primary-700 max-w-lg">
-              Transform your LinkedIn screenshots into structured, actionable
-              data with our intelligent extraction tool.
-            </p>
-          </div>
-          <div className="flex justify-center md:justify-end">
-            <img
-              src="https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=800&q=80"
-              alt="LinkedIn Profile Analysis"
-              className="rounded-2xl shadow-xl max-w-full h-auto"
-            />
-          </div>
-        </div>
-      </div>
-
       <div className="w-full max-w-3xl bg-card rounded-2xl shadow-lg p-8 md:p-10 space-y-10 mx-4 mb-16">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-[#0077B5] mb-2">
