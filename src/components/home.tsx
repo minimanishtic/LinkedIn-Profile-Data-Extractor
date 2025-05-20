@@ -380,7 +380,7 @@ export default function Home() {
       <div className="w-full max-w-3xl bg-card rounded-2xl shadow-lg p-8 md:p-10 space-y-10 mx-4 mb-16">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-[#0077B5] mb-2">
-            LinkedIn Profile Snapshot Extractor
+            GoFullpage to Zoho Recruit - 1 Click
           </h1>
           <p className="text-gray-600">
             Turn profile screenshots into structured data
