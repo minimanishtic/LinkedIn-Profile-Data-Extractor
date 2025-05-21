@@ -158,6 +158,11 @@ export default function Home() {
       }));
       setFileResults(initialResults);
 
+      // Show message about sequential processing with delays
+      setErrorMessage(
+        "Profiles are being processed sequentially with intentional delays to ensure successful integration with Zoho Recruit.",
+      );
+
       for (let i = 0; i < totalFiles; i++) {
         setCurrentFileIndex(i);
         setUploadProgress(Math.round((i / totalFiles) * 100));
@@ -197,6 +202,18 @@ export default function Home() {
             progress: 100,
           });
           successCount++;
+          // Update file status to processing
+          setFileResults((prev) =>
+            prev.map((item, idx) =>
+              idx === i
+                ? { ...item, status: "processing", progress: 100 }
+                : item,
+            ),
+          );
+
+          // Simulate processing time (3 seconds)
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+
           // Update file status to success
           setFileResults((prev) =>
             prev.map((item, idx) =>
@@ -223,6 +240,35 @@ export default function Home() {
                 : item,
             ),
           );
+        }
+
+        // If this isn't the last file, add a delay before processing the next file
+        if (i < totalFiles - 1) {
+          // Update message to show waiting time
+          setErrorMessage(
+            `Waiting 160 seconds before processing the next profile to ensure successful integration (${i + 1}/${totalFiles} completed)`,
+          );
+
+          // 160-second delay between webhook calls for bulk uploads
+          const delayTime = 160000; // 160 seconds in milliseconds
+          const startTime = Date.now();
+
+          // Update the message with countdown every second
+          await new Promise((resolve) => {
+            const countdownInterval = setInterval(() => {
+              const elapsed = Date.now() - startTime;
+              const remaining = Math.ceil((delayTime - elapsed) / 1000);
+
+              setErrorMessage(
+                `Waiting ${remaining} seconds before processing the next profile to ensure successful integration (${i + 1}/${totalFiles} completed)`,
+              );
+
+              if (elapsed >= delayTime) {
+                clearInterval(countdownInterval);
+                resolve(null);
+              }
+            }, 1000);
+          });
         }
       }
 
@@ -305,6 +351,18 @@ export default function Home() {
       clearInterval(progressInterval);
 
       if (result.success) {
+        // Update file status to processing
+        setFileResults((prev) =>
+          prev.map((item, idx) =>
+            idx === index
+              ? { ...item, status: "processing", progress: 100 }
+              : item,
+          ),
+        );
+
+        // Add a 2-second delay to simulate processing
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         // Update file status to success
         setFileResults((prev) =>
           prev.map((item, idx) =>
@@ -418,7 +476,7 @@ export default function Home() {
             rel="noopener noreferrer"
             className="flex items-center text-primary hover:text-primary-dark font-medium"
           >
-            <span className="mr-1">View Results in Google Sheets</span>
+            <span className="mr-1">View Results in Zoho Recruit</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

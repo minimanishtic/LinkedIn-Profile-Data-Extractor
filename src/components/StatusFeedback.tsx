@@ -141,6 +141,66 @@ const StatusFeedback = ({
         </div>
       )}
 
+      {status === "waiting" && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-amber-600 flex items-center">
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Waiting...
+            </span>
+          </div>
+          {message && <p className="text-sm text-amber-600 mt-1">{message}</p>}
+        </div>
+      )}
+
+      {status === "preparing" && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-primary flex items-center">
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Preparing files...
+            </span>
+            <span className="text-sm font-medium text-primary">
+              {Math.round(progress)}%
+            </span>
+          </div>
+          <Progress value={progress} className="h-1.5" />
+          {message && <p className="text-sm text-gray-500 mt-1">{message}</p>}
+
+          {isBulkUpload && fileResults.length > 0 && (
+            <FileResultsList
+              fileResults={fileResults}
+              onRetryFile={undefined}
+            />
+          )}
+        </div>
+      )}
+
+      {status === "processing" && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-primary flex items-center">
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Processing files...
+            </span>
+            <span className="text-sm font-medium text-primary">
+              {Math.round(progress)}%
+            </span>
+          </div>
+          <Progress value={progress} className="h-1.5" />
+          <p className="text-sm text-gray-500 mt-1">
+            Your files are being processed by Zoho Recruit...
+          </p>
+
+          {isBulkUpload && fileResults.length > 0 && (
+            <FileResultsList
+              fileResults={fileResults}
+              onRetryFile={undefined}
+            />
+          )}
+        </div>
+      )}
+
       {status === "uploading" && (
         <div className="space-y-2">
           <div className="flex items-center justify-between mb-2">
@@ -173,7 +233,8 @@ const StatusFeedback = ({
               ? errorCount > 0
                 ? `${successCount} of ${totalCount} files successfully uploaded. Processing now.`
                 : `All ${totalCount} files successfully uploaded. Processing now.`
-              : message || "Uploaded successfully. Processing now."}
+              : message ||
+                "Uploaded successfully to Zoho Recruit. Processing now."}
           </AlertDescription>
 
           {isBulkUpload && fileResults.length > 0 && (
