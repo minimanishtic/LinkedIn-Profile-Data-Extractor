@@ -206,7 +206,7 @@ const StatusFeedback = ({
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-primary flex items-center">
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Uploading...
+              {isCancelling ? "Cancelling..." : "Uploading..."}
             </span>
             <span className="text-sm font-medium text-primary">
               {Math.round(progress)}%
@@ -221,6 +221,22 @@ const StatusFeedback = ({
               onRetryFile={status !== "uploading" ? onRetryFile : undefined}
             />
           )}
+
+          {isBulkUpload &&
+            status === "uploading" &&
+            !isCancelling &&
+            onCancel && (
+              <div className="mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onCancel}
+                  className="w-full border-red-200 text-red-600 hover:bg-red-50"
+                >
+                  Cancel Upload
+                </Button>
+              </div>
+            )}
         </div>
       )}
 

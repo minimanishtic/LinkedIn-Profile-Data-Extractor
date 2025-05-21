@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import UploadArea from "./UploadArea";
 import SubmissionForm from "./SubmissionForm";
 import StatusFeedback from "./StatusFeedback";
