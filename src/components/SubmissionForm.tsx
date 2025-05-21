@@ -92,8 +92,8 @@ const SubmissionForm = ({
                   {disabled && disabled !== true
                     ? "Submitting..."
                     : isBulkUpload
-                      ? `Submit ${fileCount} ${fileCount === 1 ? "file" : "files"} to Make.com`
-                      : "Submit to Make.com"}
+                      ? `Submit ${fileCount} ${fileCount === 1 ? "file" : "files"} to Zoho Recruit`
+                      : "Submit to Zoho Recruit"}
                 </span>
                 <Send className="h-4 w-4" />
               </Button>
