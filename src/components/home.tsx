@@ -360,7 +360,8 @@ export default function Home() {
             GoFullpage to Zoho Recruit - 1 Click
           </h1>
           <p className="text-gray-600">
-            Turn profile screenshots into structured data
+            Turn Linkedin profile screenshots into structured data entry to Zoho
+            Recruit in just 1 click.
           </p>
         </div>
 
