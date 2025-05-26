@@ -49,15 +49,22 @@ const ZohoSettings = ({ onSave, initialSettings }: ZohoSettingsProps) => {
       return;
     }
 
+    // Clear API Token and Portal ID if they're empty strings
+    const updatedSettings = {
+      ...settings,
+      apiToken: settings.apiToken?.trim() || undefined,
+      portalId: settings.portalId?.trim() || undefined,
+    };
+
     setIsSaving(true);
     setSaveStatus("idle");
 
     try {
       // Save settings to local storage for now
-      localStorage.setItem("zohoSettings", JSON.stringify(settings));
+      localStorage.setItem("zohoSettings", JSON.stringify(updatedSettings));
 
       // Call the onSave callback
-      onSave(settings);
+      onSave(updatedSettings);
 
       setSaveStatus("success");
       setTimeout(() => setSaveStatus("idle"), 3000);
@@ -78,8 +85,9 @@ const ZohoSettings = ({ onSave, initialSettings }: ZohoSettingsProps) => {
           Zoho Recruit Settings
         </CardTitle>
         <CardDescription>
-          Configure your Zoho Recruit integration settings. These settings will
-          be used when uploading profiles.
+          Configure your integration settings. Only the Webhook URL is required.
+          API Token and Portal ID are optional and only needed for direct Zoho
+          Recruit API integration.
         </CardDescription>
       </CardHeader>
 
@@ -92,30 +100,31 @@ const ZohoSettings = ({ onSave, initialSettings }: ZohoSettingsProps) => {
         >
           <div className="space-y-3">
             <Label htmlFor="webhookUrl" className="text-base font-medium">
-              Make.com Webhook URL
+              Webhook URL <span className="text-red-500">*</span>
             </Label>
             <Input
               id="webhookUrl"
-              placeholder="https://hook.eu2.make.com/your-webhook-id"
+              placeholder="Your webhook URL"
               value={settings.webhookUrl}
               onChange={(e) =>
                 setSettings({ ...settings, webhookUrl: e.target.value })
               }
               className="w-full border-2 rounded-xl py-3 px-4 text-base focus-visible:ring-0 focus-visible:ring-offset-0 border-muted"
+              required
             />
             <p className="text-xs text-gray-500 mt-1 pl-1">
-              The webhook URL from Make.com that will receive the profile data
+              The webhook URL that will receive the profile data (required)
             </p>
           </div>
 
           <div className="space-y-3">
             <Label htmlFor="apiToken" className="text-base font-medium">
-              Zoho Recruit API Token (Optional)
+              API Token (Optional)
             </Label>
             <Input
               id="apiToken"
               type="password"
-              placeholder="Your Zoho Recruit API token"
+              placeholder="Your API token"
               value={settings.apiToken}
               onChange={(e) =>
                 setSettings({ ...settings, apiToken: e.target.value })
@@ -123,24 +132,26 @@ const ZohoSettings = ({ onSave, initialSettings }: ZohoSettingsProps) => {
               className="w-full border-2 rounded-xl py-3 px-4 text-base focus-visible:ring-0 focus-visible:ring-offset-0 border-muted"
             />
             <p className="text-xs text-gray-500 mt-1 pl-1">
-              If you want to connect directly to Zoho Recruit API instead of
-              using Make.com
+              Only required for direct API integration
             </p>
           </div>
 
           <div className="space-y-3">
             <Label htmlFor="portalId" className="text-base font-medium">
-              Zoho Recruit Portal ID (Optional)
+              Portal ID (Optional)
             </Label>
             <Input
               id="portalId"
-              placeholder="Your Zoho Recruit Portal ID"
+              placeholder="Your Portal ID"
               value={settings.portalId}
               onChange={(e) =>
                 setSettings({ ...settings, portalId: e.target.value })
               }
               className="w-full border-2 rounded-xl py-3 px-4 text-base focus-visible:ring-0 focus-visible:ring-offset-0 border-muted"
             />
+            <p className="text-xs text-gray-500 mt-1 pl-1">
+              Only required for direct API integration
+            </p>
           </div>
         </motion.div>
 
