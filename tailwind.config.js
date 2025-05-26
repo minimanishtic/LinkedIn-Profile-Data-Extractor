@@ -62,10 +62,10 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        indigo: {
-          light: "#818CF8",
-          DEFAULT: "#4F46E5",
-          dark: "#3730A3",
+        olive: {
+          light: "#AEC09A",
+          DEFAULT: "#808F65",
+          dark: "#5F6B3C",
         },
         neutral: {
           50: "#FAFAFA",
