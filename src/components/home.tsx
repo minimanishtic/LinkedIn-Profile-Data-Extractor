@@ -419,7 +419,7 @@ export default function Home() {
           </h1>
           <p className="text-gray-600">
             Turn Linkedin profile screenshots into structured data entry to Zoho
-            Recruit in just 1 click.
+            Recruit Portal in just 1 click.
           </p>
         </div>
 
