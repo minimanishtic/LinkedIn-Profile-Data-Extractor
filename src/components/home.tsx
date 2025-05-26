@@ -1,8 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import UploadArea from "./UploadArea";
 import SubmissionForm from "./SubmissionForm";
 import StatusFeedback from "./StatusFeedback";
 import UploadToggle from "./UploadToggle";
+import ZohoSettings, { ZohoSettings as ZohoSettingsType } from "./ZohoSettings";
+import SettingsButton from "./SettingsButton";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 type UploadStatus = "idle" | "uploading" | "success" | "error";
 type UploadMode = "single" | "bulk";
@@ -23,6 +26,29 @@ export default function Home() {
       progress?: number;
     }[]
   >([]);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [zohoSettings, setZohoSettings] = useState<ZohoSettingsType>(() => {
+    // Try to load settings from localStorage
+    const savedSettings = localStorage.getItem("zohoSettings");
+    if (savedSettings) {
+      try {
+        return JSON.parse(savedSettings);
+      } catch (e) {
+        console.error("Failed to parse saved settings", e);
+      }
+    }
+
+    // Default settings
+    return {
+      webhookUrl:
+        import.meta.env.VITE_WEBHOOK_URL ||
+        "https://hook.eu2.make.com/v3uyigxtm7tsrq5qcqyayuxhqpp4rxhr",
+      apiToken: "",
+      portalId: "",
+    };
+  });
+  const [isCancelling, setIsCancelling] = useState<boolean>(false);
+  const cancelUploadRef = useRef<boolean>(false);
 
   const handleFileSelect = (files: File[] | null) => {
     setSelectedFiles(files || []);
@@ -58,15 +84,29 @@ export default function Home() {
       formData.append("candidateName", name || "Unknown");
       formData.append("fileName", file.name);
 
-      // Using environment variable for the webhook URL, with fallback to the provided webhook URL
-      const webhookUrl =
-        import.meta.env.VITE_WEBHOOK_URL ||
-        "https://hook.eu2.make.com/v3uyigxtm7tsrq5qcqyayuxhqpp4rxhr";
+      // Add Zoho settings if available
+      if (zohoSettings.apiToken) {
+        formData.append("zohoApiToken", zohoSettings.apiToken);
+      }
+
+      if (zohoSettings.portalId) {
+        formData.append("zohoPortalId", zohoSettings.portalId);
+      }
+
+      // Add any custom fields
+      if (zohoSettings.customFields) {
+        Object.entries(zohoSettings.customFields).forEach(([key, value]) => {
+          formData.append(`customField_${key}`, value);
+        });
+      }
+
+      // Use the configured webhook URL from settings
+      const webhookUrl = zohoSettings.webhookUrl;
 
       // Check if webhook URL is configured
       if (!webhookUrl) {
         throw new Error(
-          "Webhook URL is not configured. Please set the VITE_WEBHOOK_URL environment variable.",
+          "Webhook URL is not configured. Please configure your Zoho settings.",
         );
       }
 
@@ -410,9 +450,21 @@ export default function Home() {
     }
   };
 
+  const handleSaveSettings = (settings: ZohoSettingsType) => {
+    setZohoSettings(settings);
+    setShowSettings(false);
+  };
+
+  const handleCancelUpload = () => {
+    setIsCancelling(true);
+    cancelUploadRef.current = true;
+    // The upload process will check this ref and stop processing
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-start p-0 bg-background">
-      <div className="w-full max-w-3xl bg-card rounded-2xl shadow-lg p-8 md:p-10 space-y-10 mx-4 mb-16">
+      <div className="w-full max-w-3xl bg-card rounded-2xl shadow-lg p-8 md:p-10 space-y-10 mx-4 mb-16 relative">
+        <SettingsButton onClick={() => setShowSettings(true)} />
         <div className="text-center">
           <h1 className="text-3xl font-bold text-primary mb-2 text-center">
             GoFullpage to Zoho Recruit - 1 Click
@@ -458,6 +510,8 @@ export default function Home() {
           onRetryFile={handleRetryFile}
           fileResults={fileResults}
           isBulkUpload={uploadMode === "bulk"}
+          onCancel={handleCancelUpload}
+          isCancelling={isCancelling}
         />
 
         <div className="mt-8 p-6 bg-neutral-50 border border-neutral-100 rounded-lg text-sm text-neutral-600">
@@ -495,6 +549,15 @@ export default function Home() {
           </a>
         </div>
       </div>
+
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent className="sm:max-w-[600px] p-0 bg-transparent border-none">
+          <ZohoSettings
+            onSave={handleSaveSettings}
+            initialSettings={zohoSettings}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

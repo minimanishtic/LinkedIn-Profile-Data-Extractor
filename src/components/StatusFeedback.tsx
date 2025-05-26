@@ -27,6 +27,8 @@ interface StatusFeedbackProps {
   onRetryFile?: (index: number) => void; // Added for retrying individual files
   fileResults?: FileResult[];
   isBulkUpload?: boolean;
+  onCancel?: () => void;
+  isCancelling?: boolean;
 }
 
 const FileResultItem = ({
@@ -128,6 +130,8 @@ const StatusFeedback = ({
   onRetryFile,
   fileResults = [],
   isBulkUpload = false,
+  onCancel,
+  isCancelling = false,
 }: StatusFeedbackProps) => {
   const successCount = fileResults.filter((r) => r.status === "success").length;
   const errorCount = fileResults.filter((r) => r.status === "error").length;
