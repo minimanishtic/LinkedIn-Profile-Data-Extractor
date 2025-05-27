@@ -38,6 +38,89 @@ router.get("/verify", verifyToken, (req, res) => {
 });
 
 /**
+ * @route GET /api/auth/zoho/connect
+ * @desc Redirect to Zoho OAuth authorization URL
+ * @access Public
+ */
+router.get("/zoho/connect", (req, res) => {
+  try {
+    const userId = req.query.userId;
+
+    // Construct the Zoho OAuth authorization URL
+    const authUrl = new URL("https://accounts.zoho.com/oauth/v2/auth");
+    authUrl.searchParams.append("client_id", process.env.ZOHO_CLIENT_ID);
+    authUrl.searchParams.append("redirect_uri", process.env.ZOHO_REDIRECT_URI);
+    authUrl.searchParams.append("scope", "ZohoRecruit.modules.ALL");
+    authUrl.searchParams.append("response_type", "code");
+    authUrl.searchParams.append("access_type", "offline");
+    authUrl.searchParams.append("state", userId);
+
+    // Redirect the user to the Zoho OAuth authorization URL
+    res.redirect(authUrl.toString());
+  } catch (error) {
+    console.error("Zoho connect error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+/**
+ * @route GET /api/auth/zoho/callback
+ * @desc Handle Zoho OAuth callback
+ * @access Public
+ */
+router.get("/zoho/callback", (req, res) => {
+  try {
+    const { code, state } = req.query;
+
+    // Log the received code and state
+    console.log("Zoho OAuth callback received", { code, state });
+
+    // Return HTML response with auto-close script
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Zoho Connection</title>
+          <style>
+            body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
+            .message { margin: 20px; }
+          </style>
+        </head>
+        <body>
+          <h2>Zoho connected successfully!</h2>
+          <p class="message">You can close this window.</p>
+          <script>
+            window.setTimeout(() => window.close(), 2000);
+          </script>
+        </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error("Zoho callback error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+/**
+ * @route GET /api/auth/zoho/status/:userId
+ * @desc Check Zoho connection status for a user
+ * @access Public
+ */
+router.get("/zoho/status/:userId", (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // TODO: Check if user has valid Zoho tokens in database
+
+    // For now, return a placeholder response
+    res.json({ connected: false, userId });
+  } catch (error) {
+    console.error("Zoho status error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+/**
  * @route POST /api/auth/zoho/callback
  * @desc Handle Zoho OAuth callback
  * @access Public
