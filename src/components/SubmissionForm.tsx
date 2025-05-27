@@ -5,10 +5,19 @@ import { Label } from "./ui/label";
 import { Card, CardContent } from "./ui/card";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 interface SubmissionFormProps {
   candidateName: string;
   onNameChange: (name: string) => void;
+  selectedCrm: string;
+  onCrmChange: (crm: string) => void;
   onSubmit: () => void;
   disabled?: boolean;
   isBulkUpload?: boolean;
@@ -18,6 +27,8 @@ interface SubmissionFormProps {
 const SubmissionForm = ({
   candidateName = "",
   onNameChange = () => {},
+  selectedCrm = "Zoho Recruit",
+  onCrmChange = () => {},
   onSubmit = () => {},
   disabled = false,
   isBulkUpload = false,
@@ -38,43 +49,66 @@ const SubmissionForm = ({
           }}
           className="space-y-6"
         >
-          <div className="space-y-3">
-            <Label htmlFor="candidateName" className="text-base font-medium">
-              {isBulkUpload
-                ? "Candidate Name (Applied to all files)"
-                : "Candidate Name (Optional)"}
-            </Label>
-            <motion.div
-              animate={isFocused ? { scale: 1.01 } : { scale: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className={`rounded-xl overflow-hidden transition-all duration-300 ${isFocused ? "ring-2 ring-primary-300 ring-offset-1" : ""}`}
-            >
-              <Input
-                id="candidateName"
-                placeholder={
-                  isBulkUpload
-                    ? "Enter shared candidate name or leave blank"
-                    : "Enter candidate name"
-                }
-                value={candidateName}
-                onChange={(e) => onNameChange(e.target.value)}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                className="w-full border-2 rounded-xl py-3 px-4 text-base focus-visible:ring-0 focus-visible:ring-offset-0 border-muted"
-                disabled={disabled}
-              />
-            </motion.div>
-            {isBulkUpload && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-xs text-gray-500 mt-1 pl-1"
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <Label htmlFor="candidateName" className="text-base font-medium">
+                {isBulkUpload
+                  ? "Candidate Name (Applied to all files)"
+                  : "Candidate Name (Optional)"}
+              </Label>
+              <motion.div
+                animate={isFocused ? { scale: 1.01 } : { scale: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className={`rounded-xl overflow-hidden transition-all duration-300 ${isFocused ? "ring-2 ring-primary-300 ring-offset-1" : ""}`}
               >
-                If files are from different candidates, leave blank and include
-                names in filenames
-              </motion.p>
-            )}
+                <Input
+                  id="candidateName"
+                  placeholder={
+                    isBulkUpload
+                      ? "Enter shared candidate name or leave blank"
+                      : "Enter candidate name"
+                  }
+                  value={candidateName}
+                  onChange={(e) => onNameChange(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  className="w-full border-2 rounded-xl py-3 px-4 text-base focus-visible:ring-0 focus-visible:ring-offset-0 border-muted"
+                  disabled={disabled}
+                />
+              </motion.div>
+              {isBulkUpload && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-xs text-gray-500 mt-1 pl-1"
+                >
+                  If files are from different candidates, leave blank and
+                  include names in filenames
+                </motion.p>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="crmSelect" className="text-base font-medium">
+                Select CRM
+              </Label>
+              <Select
+                value={selectedCrm}
+                onValueChange={onCrmChange}
+                disabled={disabled}
+              >
+                <SelectTrigger className="w-full border-2 rounded-xl py-3 px-4 text-base focus-visible:ring-0 focus-visible:ring-offset-0 border-muted">
+                  <SelectValue placeholder="Select CRM" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Zoho Recruit">Zoho Recruit</SelectItem>
+                  <SelectItem value="Greenhouse">Greenhouse</SelectItem>
+                  <SelectItem value="Lever">Lever</SelectItem>
+                  <SelectItem value="Others">Others</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="pt-4">

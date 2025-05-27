@@ -14,6 +14,7 @@ export default function Home() {
   const [uploadMode, setUploadMode] = useState<UploadMode>("single");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [candidateName, setCandidateName] = useState<string>("");
+  const [selectedCrm, setSelectedCrm] = useState<string>("Zoho Recruit");
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>("idle");
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [currentFileIndex, setCurrentFileIndex] = useState<number>(0);
@@ -73,6 +74,10 @@ export default function Home() {
     setCandidateName(name);
   };
 
+  const handleCrmChange = (crm: string) => {
+    setSelectedCrm(crm);
+  };
+
   const uploadSingleFile = async (
     file: File,
     name: string,
@@ -83,6 +88,7 @@ export default function Home() {
       formData.append("file", file);
       formData.append("candidateName", name || "Unknown");
       formData.append("fileName", file.name);
+      formData.append("selectedCrm", selectedCrm);
 
       // Add Zoho settings if available
       if (zohoSettings.apiToken) {
@@ -488,6 +494,8 @@ export default function Home() {
         <SubmissionForm
           candidateName={candidateName}
           onNameChange={handleNameChange}
+          selectedCrm={selectedCrm}
+          onCrmChange={handleCrmChange}
           onSubmit={handleSubmit}
           disabled={
             selectedFiles.length === 0 ||
