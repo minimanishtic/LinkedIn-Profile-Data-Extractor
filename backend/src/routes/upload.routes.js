@@ -2,6 +2,69 @@ const express = require("express");
 const router = express.Router();
 const { verifyToken } = require("../middleware/auth.middleware");
 const zohoService = require("../services/zoho.service");
+const { v4: uuidv4 } = require("uuid");
+
+/**
+ * @route POST /api/upload
+ * @desc Upload candidate data from Make.com webhook
+ * @access Public
+ */
+router.post("/", async (req, res) => {
+  try {
+    const { candidateData, userId, webhookId } = req.body;
+
+    // Validate required fields
+    if (!candidateData) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Candidate data is required" });
+    }
+
+    const { first_name, last_name, email } = candidateData;
+
+    if (!first_name) {
+      return res
+        .status(400)
+        .json({ success: false, error: "First name is required" });
+    }
+
+    if (!last_name) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Last name is required" });
+    }
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Email is required" });
+    }
+
+    // Log the received data
+    console.log(
+      "Received candidate data:",
+      JSON.stringify(candidateData, null, 2),
+    );
+    console.log("User ID:", userId);
+    console.log("Webhook ID:", webhookId);
+
+    // TODO: Call Zoho API to create candidate record
+
+    // Generate a UUID for the record
+    const recordId = uuidv4();
+    const timestamp = new Date().toISOString();
+
+    res.json({
+      success: true,
+      message: "Candidate data received",
+      recordId,
+      timestamp,
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
 
 /**
  * @route POST /api/upload/resume
