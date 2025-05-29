@@ -25,9 +25,14 @@ app.use(
   }),
 );
 
+// Root route
+app.get("/", (req, res) => {
+  res.json({ message: "Backend API Running" });
+});
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "API is running" });
+  res.json({ status: "OK", message: "API is running" });
 });
 
 // Routes
