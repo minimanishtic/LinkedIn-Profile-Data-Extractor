@@ -33,40 +33,57 @@ app.get("/api/health", (req, res) => {
 // GoFullpage Webhook Endpoint - Complete Flow
 app.post("/api/gofullpage-webhook", async (req, res) => {
   try {
-    console.log("Received GoFullpage data:", req.body);
+    console.log("Received GoFullpage data:", Object.keys(req.body));
 
-    const { screenshot_url, userId = "default" } = req.body;
+    const {
+      screenshot_url,
+      image_data,
+      image_base64,
+      userId = "default",
+    } = req.body;
 
-    if (!screenshot_url) {
+    // Check what format we received
+    if (!screenshot_url && !image_data && !image_base64) {
       return res.status(400).json({
         status: "error",
-        message: "Screenshot URL is required",
+        message:
+          "No image data provided. Expected screenshot_url, image_data, or image_base64",
       });
     }
 
-    // Step 1: Extract text from image using OCR
+    let ocrText;
+
+    // Step 1: Extract text based on input format
     console.log("Step 1: Running OCR...");
-    const ocrText = await ocrService.extractTextFromImage(screenshot_url);
+
+    if (image_base64 || image_data) {
+      // Direct image data from upload
+      console.log("Processing direct image data...");
+      ocrText = await ocrService.extractTextFromBase64(
+        image_base64 || image_data,
+      );
+    } else if (screenshot_url) {
+      // URL provided (for testing)
+      console.log("Processing image from URL...");
+      ocrText = await ocrService.extractTextFromImage(screenshot_url);
+    }
+
     console.log("OCR completed. Text length:", ocrText.length);
 
-    // Step 2: Parse LinkedIn profile using AI
+    // Rest of the flow remains the same...
     console.log("Step 2: Parsing with AI...");
     const profileData = await aiService.parseLinkedInProfile(ocrText);
     console.log("AI parsing completed:", profileData);
 
-    // Step 3: Get user's Zoho credentials
     console.log("Step 3: Getting user credentials...");
     const userCreds = await zohoService.getUserCredentials(userId);
 
-    // Step 4: Create candidate in Zoho
     console.log("Step 4: Creating candidate in Zoho...");
     const zohoResponse = await zohoService.createCandidate(
       profileData,
       userCreds.access_token,
     );
-    console.log("Zoho candidate created:", zohoResponse);
 
-    // Return success response
     res.json({
       status: "success",
       message: "LinkedIn profile processed and added to Zoho Recruit",
