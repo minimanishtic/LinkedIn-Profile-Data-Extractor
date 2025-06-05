@@ -8,7 +8,11 @@ class OCRService {
 
   async extractTextFromImage(imageUrl) {
     try {
-      console.log("Extracting text from image:", imageUrl);
+      console.log("Starting OCR for image:", imageUrl);
+      console.log(
+        "Using API key:",
+        this.apiKey ? "API key is set" : "NO API KEY FOUND",
+      );
 
       const requestBody = {
         requests: [
@@ -28,6 +32,7 @@ class OCRService {
         ],
       };
 
+      console.log("Sending request to Google Vision API...");
       const response = await axios.post(
         `${this.apiUrl}?key=${this.apiKey}`,
         requestBody,
@@ -38,16 +43,37 @@ class OCRService {
         },
       );
 
-      const textAnnotations = response.data.responses[0].textAnnotations;
+      console.log(
+        "Google Vision API response:",
+        JSON.stringify(response.data, null, 2),
+      );
 
-      if (textAnnotations && textAnnotations.length > 0) {
-        // The first annotation contains the entire text
-        return textAnnotations[0].description;
+      if (response.data.responses && response.data.responses[0]) {
+        const textAnnotations = response.data.responses[0].textAnnotations;
+
+        if (textAnnotations && textAnnotations.length > 0) {
+          console.log(
+            "Text found! Length:",
+            textAnnotations[0].description.length,
+          );
+          return textAnnotations[0].description;
+        }
+
+        // Check for errors in response
+        if (response.data.responses[0].error) {
+          throw new Error(
+            `Vision API Error: ${JSON.stringify(response.data.responses[0].error)}`,
+          );
+        }
       }
 
       throw new Error("No text found in image");
     } catch (error) {
-      console.error("OCR Error:", error.response?.data || error);
+      console.error("OCR Error Details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
       throw error;
     }
   }
