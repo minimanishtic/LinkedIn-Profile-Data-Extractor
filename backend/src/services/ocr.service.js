@@ -1,29 +1,53 @@
-const vision = require("@google-cloud/vision");
+const axios = require("axios");
 
 class OCRService {
   constructor() {
-    // Initialize the Google Vision client
-    this.client = new vision.ImageAnnotatorClient({
-      keyFilename: process.env.GOOGLE_CLOUD_KEYFILE,
-    });
+    this.apiKey = process.env.GOOGLE_CLOUD_API_KEY;
+    this.apiUrl = "https://vision.googleapis.com/v1/images:annotate";
   }
 
   async extractTextFromImage(imageUrl) {
     try {
       console.log("Extracting text from image:", imageUrl);
 
-      // Perform text detection on the image file
-      const [result] = await this.client.textDetection(imageUrl);
-      const detections = result.textAnnotations;
+      const requestBody = {
+        requests: [
+          {
+            image: {
+              source: {
+                imageUri: imageUrl,
+              },
+            },
+            features: [
+              {
+                type: "TEXT_DETECTION",
+                maxResults: 1,
+              },
+            ],
+          },
+        ],
+      };
 
-      if (detections && detections.length > 0) {
+      const response = await axios.post(
+        `${this.apiUrl}?key=${this.apiKey}`,
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const textAnnotations = response.data.responses[0].textAnnotations;
+
+      if (textAnnotations && textAnnotations.length > 0) {
         // The first annotation contains the entire text
-        return detections[0].description;
+        return textAnnotations[0].description;
       }
 
       throw new Error("No text found in image");
     } catch (error) {
-      console.error("OCR Error:", error);
+      console.error("OCR Error:", error.response?.data || error);
       throw error;
     }
   }
