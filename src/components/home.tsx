@@ -15,7 +15,7 @@ export default function Home() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [candidateName, setCandidateName] = useState<string>("");
   const [selectedCrm, setSelectedCrm] = useState<string>("Zoho Recruit");
-  const [zohoApiToken, setZohoApiToken] = useState<string>("");
+
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>("idle");
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [currentFileIndex, setCurrentFileIndex] = useState<number>(0);
@@ -91,16 +91,6 @@ export default function Home() {
       formData.append("candidateName", name || "Unknown");
       formData.append("fileName", file.name);
       formData.append("selectedCrm", selectedCrm);
-
-      // Add credentials object for Zoho Recruit
-      if (selectedCrm === "Zoho Recruit" && zohoApiToken) {
-        formData.append(
-          "credentials",
-          JSON.stringify({
-            zohoApiToken: zohoApiToken,
-          }),
-        );
-      }
 
       // Add Zoho settings if available
       if (zohoSettings.apiToken) {
@@ -516,8 +506,6 @@ export default function Home() {
           }
           isBulkUpload={uploadMode === "bulk"}
           fileCount={selectedFiles.length}
-          zohoApiToken={zohoApiToken}
-          onZohoApiTokenChange={setZohoApiToken}
         />
 
         <StatusFeedback
