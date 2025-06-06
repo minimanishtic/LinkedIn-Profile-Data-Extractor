@@ -40,12 +40,16 @@ app.post("/api/gofullpage-webhook", upload.single("file"), async (req, res) => {
     console.log("=== INCOMING GOFULLPAGE DATA ===");
     console.log("Body:", req.body);
     console.log("File:", req.file);
+    console.log("Headers:", req.headers);
     console.log("================================");
 
     let imageBase64;
-    let userId = "default";
+    let userId = req.body.userId || "default";
+    let candidateName = req.body.candidateName || "Unknown";
+    let fileName = req.body.fileName || "screenshot.png";
+    let selectedCrm = req.body.selectedCrm || "Zoho Recruit";
 
-    // Check if we have file data from multer
+    // Check if we have file data from multer (multipart/form-data)
     if (req.file) {
       // Convert buffer to base64
       imageBase64 = req.file.buffer.toString("base64");
@@ -58,11 +62,6 @@ app.post("/api/gofullpage-webhook", upload.single("file"), async (req, res) => {
         // If it's already base64 or hex string
         imageBase64 = req.body.data;
       }
-    }
-
-    // Get userId if provided
-    if (req.body.userId) {
-      userId = req.body.userId;
     }
 
     if (!imageBase64) {
@@ -97,6 +96,10 @@ app.post("/api/gofullpage-webhook", upload.single("file"), async (req, res) => {
       status: "success",
       message: "LinkedIn profile processed and added to Zoho Recruit",
       data: {
+        userId: userId,
+        candidateName: candidateName,
+        fileName: fileName,
+        selectedCrm: selectedCrm,
         ocrTextLength: ocrText.length,
         parsedProfile: profileData,
         zohoResponse: zohoResponse,

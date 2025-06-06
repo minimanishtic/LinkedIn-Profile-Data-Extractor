@@ -44,7 +44,7 @@ export default function Home() {
     return {
       webhookUrl:
         import.meta.env.VITE_WEBHOOK_URL ||
-        "https://hook.eu2.make.com/v3uyigxtm7tsrq5qcqyayuxhqpp4rxhr",
+        "https://tempo-deployment-aaff6b8c-f06-manish-dwivedis-projects-b44b02df.vercel.app/api/gofullpage-webhook",
       apiToken: "",
       portalId: "",
     };
@@ -87,6 +87,7 @@ export default function Home() {
       // Create form data for the webhook request
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("userId", "default");
       formData.append("candidateName", name || "Unknown");
       formData.append("fileName", file.name);
       formData.append("selectedCrm", selectedCrm);
