@@ -1,9 +1,13 @@
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
 const ocrService = require("./src/services/ocr.service");
 const aiService = require("./src/services/ai.service");
 const zohoService = require("./src/services/zoho.service");
 const app = express();
+
+// Add multer for handling file uploads
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Enable CORS
 app.use(cors());
@@ -31,53 +35,58 @@ app.get("/api/health", (req, res) => {
 });
 
 // GoFullpage Webhook Endpoint - Complete Flow
-app.post("/api/gofullpage-webhook", async (req, res) => {
+app.post("/api/gofullpage-webhook", upload.single("file"), async (req, res) => {
   try {
-    console.log("Received GoFullpage data:", Object.keys(req.body));
+    console.log("=== INCOMING GOFULLPAGE DATA ===");
+    console.log("Body:", req.body);
+    console.log("File:", req.file);
+    console.log("================================");
 
-    const {
-      screenshot_url,
-      image_data,
-      image_base64,
-      userId = "default",
-    } = req.body;
+    let imageBase64;
+    let userId = "default";
 
-    // Check what format we received
-    if (!screenshot_url && !image_data && !image_base64) {
+    // Check if we have file data from multer
+    if (req.file) {
+      // Convert buffer to base64
+      imageBase64 = req.file.buffer.toString("base64");
+      console.log("Converted file to base64, length:", imageBase64.length);
+    } else if (req.body.data) {
+      // If data comes as a buffer in body (from Make.com)
+      if (Buffer.isBuffer(req.body.data)) {
+        imageBase64 = req.body.data.toString("base64");
+      } else if (typeof req.body.data === "string") {
+        // If it's already base64 or hex string
+        imageBase64 = req.body.data;
+      }
+    }
+
+    // Get userId if provided
+    if (req.body.userId) {
+      userId = req.body.userId;
+    }
+
+    if (!imageBase64) {
       return res.status(400).json({
         status: "error",
-        message:
-          "No image data provided. Expected screenshot_url, image_data, or image_base64",
+        message: "No image data found in request",
       });
     }
 
-    let ocrText;
-
-    // Step 1: Extract text based on input format
-    console.log("Step 1: Running OCR...");
-
-    if (image_base64 || image_data) {
-      // Direct image data from upload
-      console.log("Processing direct image data...");
-      ocrText = await ocrService.extractTextFromBase64(
-        image_base64 || image_data,
-      );
-    } else if (screenshot_url) {
-      // URL provided (for testing)
-      console.log("Processing image from URL...");
-      ocrText = await ocrService.extractTextFromImage(screenshot_url);
-    }
-
+    // Step 1: Extract text using OCR
+    console.log("Step 1: Running OCR on base64 image...");
+    const ocrText = await ocrService.extractTextFromBase64(imageBase64);
     console.log("OCR completed. Text length:", ocrText.length);
 
-    // Rest of the flow remains the same...
+    // Step 2: Parse with AI
     console.log("Step 2: Parsing with AI...");
     const profileData = await aiService.parseLinkedInProfile(ocrText);
     console.log("AI parsing completed:", profileData);
 
+    // Step 3: Get user's Zoho credentials
     console.log("Step 3: Getting user credentials...");
     const userCreds = await zohoService.getUserCredentials(userId);
 
+    // Step 4: Create candidate in Zoho
     console.log("Step 4: Creating candidate in Zoho...");
     const zohoResponse = await zohoService.createCandidate(
       profileData,
