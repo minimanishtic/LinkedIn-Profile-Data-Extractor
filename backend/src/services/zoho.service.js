@@ -32,17 +32,34 @@ class ZohoService {
   // Refresh access token if needed
   async refreshAccessToken(refreshToken) {
     try {
-      const response = await axios.post(
-        "https://accounts.zoho.in/oauth/v2/token",
-        {
-          refresh_token: refreshToken,
-          client_id: process.env.ZOHO_CLIENT_ID,
-          client_secret: process.env.ZOHO_CLIENT_SECRET,
-          grant_type: "refresh_token",
-        },
+      console.log("Attempting to refresh token...");
+      console.log(
+        "Refresh token:",
+        refreshToken
+          ? `${refreshToken.substring(0, 20)}...`
+          : "NO REFRESH TOKEN",
+      );
+      console.log("Client ID:", process.env.ZOHO_CLIENT_ID ? "Set" : "Missing");
+      console.log(
+        "Client Secret:",
+        process.env.ZOHO_CLIENT_SECRET ? "Set" : "Missing",
       );
 
-      // Optionally update the access token in env var
+      const requestBody = {
+        refresh_token: refreshToken,
+        client_id: process.env.ZOHO_CLIENT_ID,
+        client_secret: process.env.ZOHO_CLIENT_SECRET,
+        grant_type: "refresh_token",
+      };
+
+      console.log("Request body:", JSON.stringify(requestBody, null, 2));
+
+      const response = await axios.post(
+        "https://accounts.zoho.in/oauth/v2/token",
+        requestBody,
+      );
+
+      console.log("Token refreshed successfully");
       process.env.ZOHO_ACCESS_TOKEN = response.data.access_token;
 
       return response.data.access_token;
