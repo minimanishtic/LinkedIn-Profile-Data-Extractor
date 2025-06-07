@@ -47,7 +47,7 @@ class ZohoService {
 
       return response.data.access_token;
     } catch (error) {
-      console.error("Token refresh error:", error);
+      console.error("Token refresh error:", error.response?.data || error);
       throw error;
     }
   }
