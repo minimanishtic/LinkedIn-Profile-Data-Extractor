@@ -3,7 +3,8 @@ const cors = require("cors");
 const multer = require("multer");
 const ocrService = require("./src/services/ocr.service");
 const aiService = require("./src/services/ai.service");
-const zohoService = require("./src/services/zoho.service");
+const ZohoService = require("./src/services/zoho.service");
+const zohoService = new ZohoService();
 const app = express();
 
 // Add multer for handling file uploads
