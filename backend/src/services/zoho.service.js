@@ -80,11 +80,25 @@ class ZohoService {
       );
 
       console.log("Token refresh successful!");
-      this.accessToken = response.data.access_token;
+      console.log("Response data:", {
+        hasAccessToken: !!response.data.access_token,
+        hasRefreshToken: !!response.data.refresh_token,
+        expiresIn: response.data.expires_in,
+      });
 
+      // IMPORTANT: Save the new access token
+      if (response.data.access_token) {
+        this.accessToken = response.data.access_token;
+        console.log("Access token updated in service");
+      } else {
+        console.error("No access token in refresh response!");
+        throw new Error("No access token received from refresh");
+      }
+
+      // Update refresh token if provided
       if (response.data.refresh_token) {
         this.refreshToken = response.data.refresh_token;
-        console.log("New refresh token received");
+        console.log("New refresh token received and saved");
       }
 
       return this.accessToken;
@@ -93,6 +107,7 @@ class ZohoService {
         status: error.response?.status,
         error: error.response?.data?.error,
         error_description: error.response?.data?.error_description,
+        fullError: error.response?.data,
       });
       throw error;
     }
