@@ -71,7 +71,7 @@ class ZohoService {
     try {
       const response = await axios.post(
         "https://accounts.zoho.in/oauth/v2/token",
-        params.toString(),
+        params, // CHANGE: Pass URLSearchParams object directly, NOT params.toString()
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -79,35 +79,30 @@ class ZohoService {
         },
       );
 
-      console.log("Token refresh successful!");
-      console.log("Response data:", {
+      console.log("Token refresh response:", {
+        status: response.status,
         hasAccessToken: !!response.data.access_token,
-        hasRefreshToken: !!response.data.refresh_token,
-        expiresIn: response.data.expires_in,
+        data: response.data,
       });
 
-      // IMPORTANT: Save the new access token
       if (response.data.access_token) {
         this.accessToken = response.data.access_token;
-        console.log("Access token updated in service");
+        console.log("Access token updated successfully");
+
+        if (response.data.refresh_token) {
+          this.refreshToken = response.data.refresh_token;
+          console.log("New refresh token also received");
+        }
+
+        return this.accessToken;
       } else {
-        console.error("No access token in refresh response!");
-        throw new Error("No access token received from refresh");
+        console.error("Zoho error response:", response.data);
+        throw new Error(response.data.error || "No access token received");
       }
-
-      // Update refresh token if provided
-      if (response.data.refresh_token) {
-        this.refreshToken = response.data.refresh_token;
-        console.log("New refresh token received and saved");
-      }
-
-      return this.accessToken;
     } catch (error) {
       console.error("Token refresh failed:", {
-        status: error.response?.status,
-        error: error.response?.data?.error,
-        error_description: error.response?.data?.error_description,
-        fullError: error.response?.data,
+        message: error.message,
+        response: error.response?.data,
       });
       throw error;
     }
