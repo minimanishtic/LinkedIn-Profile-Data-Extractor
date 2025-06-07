@@ -81,16 +81,9 @@ app.post("/api/gofullpage-webhook", upload.single("file"), async (req, res) => {
     const profileData = await aiService.parseLinkedInProfile(ocrText);
     console.log("AI parsing completed:", profileData);
 
-    // Step 3: Get user's Zoho credentials
-    console.log("Step 3: Getting user credentials...");
-    const userCreds = await zohoService.getUserCredentials(userId);
-
-    // Step 4: Create candidate in Zoho
-    console.log("Step 4: Creating candidate in Zoho...");
-    const zohoResponse = await zohoService.createCandidate(
-      profileData,
-      userCreds.access_token,
-    );
+    // Step 3: Create candidate in Zoho (credentials handled internally)
+    console.log("Step 3: Creating candidate in Zoho...");
+    const zohoResponse = await zohoService.createCandidate(profileData);
 
     res.json({
       status: "success",
