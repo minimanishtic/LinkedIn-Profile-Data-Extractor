@@ -3,6 +3,14 @@ const axios = require("axios");
 class ZohoService {
   constructor() {
     this.baseUrl = "https://recruit.zoho.in/recruit/v2";
+
+    // Debug environment variables on service load
+    console.log("Environment check on service load:");
+    console.log("ZOHO_REFRESH_TOKEN exists:", !!process.env.ZOHO_REFRESH_TOKEN);
+    console.log(
+      "All ZOHO env vars:",
+      Object.keys(process.env).filter((key) => key.includes("ZOHO")),
+    );
   }
 
   // Get user's Zoho credentials from database (placeholder for now)
@@ -117,6 +125,18 @@ class ZohoService {
       if (error.response?.status === 401) {
         // Token expired, refresh and retry
         console.log("Token expired, refreshing...");
+
+        // Debug refresh token availability
+        console.log("About to refresh token...");
+        console.log(
+          "Refresh token from env:",
+          process.env.ZOHO_REFRESH_TOKEN ? "EXISTS" : "MISSING",
+        );
+        console.log(
+          "First 20 chars:",
+          process.env.ZOHO_REFRESH_TOKEN?.substring(0, 20),
+        );
+
         const newToken = await this.refreshAccessToken(
           process.env.ZOHO_REFRESH_TOKEN,
         );
