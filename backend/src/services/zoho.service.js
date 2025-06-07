@@ -4,40 +4,44 @@ class ZohoService {
   constructor() {
     this.baseUrl = "https://recruit.zoho.in/recruit/v2";
 
-    // Debug environment variables on service load
-    console.log("Environment check on service load:");
-    console.log("ZOHO_REFRESH_TOKEN exists:", !!process.env.ZOHO_REFRESH_TOKEN);
-    console.log(
-      "All ZOHO env vars:",
-      Object.keys(process.env).filter((key) => key.includes("ZOHO")),
-    );
+    // Don't require access token - it might not exist
+    this.accessToken = process.env.ZOHO_ACCESS_TOKEN || null;
+    this.refreshToken = process.env.ZOHO_REFRESH_TOKEN;
+    this.clientId = process.env.ZOHO_CLIENT_ID;
+    this.clientSecret = process.env.ZOHO_CLIENT_SECRET;
+
+    console.log("ZohoService initialized:", {
+      hasAccessToken: !!this.accessToken,
+      hasRefreshToken: !!this.refreshToken,
+      hasClientId: !!this.clientId,
+      hasClientSecret: !!this.clientSecret,
+    });
+
+    // If no access token but refresh token exists, get a new access token immediately
+    if (!this.accessToken && this.refreshToken) {
+      console.log("No access token found, will refresh on first use");
+    }
   }
 
   // Get user's Zoho credentials from database (placeholder for now)
   async getUserCredentials(userId) {
     try {
-      // Try using existing access token first
-      const accessToken = process.env.ZOHO_ACCESS_TOKEN;
+      // If no access token, refresh first
+      if (!this.accessToken) {
+        console.log("No access token available, refreshing...");
+        await this.refreshAccessToken(this.refreshToken);
+      }
 
-      // For now, return static credentials
-      // In production, this would fetch from database per user
       return {
-        access_token: accessToken,
+        access_token: this.accessToken,
         api_domain: "https://recruit.zoho.in",
       };
     } catch (error) {
-      // If token expired, refresh it
-      const newToken = await this.refreshAccessToken(
-        process.env.ZOHO_REFRESH_TOKEN,
-      );
-      return {
-        access_token: newToken,
-        api_domain: "https://recruit.zoho.in",
-      };
+      console.error("Error getting user credentials:", error);
+      throw error;
     }
   }
 
-  // Refresh access token if needed
   async refreshAccessToken(refreshToken) {
     console.log("Attempting to refresh token...");
     console.log(
@@ -49,17 +53,16 @@ class ZohoService {
       throw new Error("Refresh token is missing");
     }
 
-    // Create URLSearchParams for form-encoded data
     const params = new URLSearchParams();
     params.append("refresh_token", refreshToken);
-    params.append("client_id", process.env.ZOHO_CLIENT_ID);
-    params.append("client_secret", process.env.ZOHO_CLIENT_SECRET);
+    params.append("client_id", this.clientId);
+    params.append("client_secret", this.clientSecret);
     params.append("grant_type", "refresh_token");
 
     try {
       const response = await axios.post(
         "https://accounts.zoho.in/oauth/v2/token",
-        params.toString(), // Convert URLSearchParams to string
+        params.toString(),
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -68,14 +71,14 @@ class ZohoService {
       );
 
       console.log("Token refresh successful!");
-      console.log(
-        "New access token received:",
-        response.data.access_token ? "Yes" : "No",
-      );
+      this.accessToken = response.data.access_token;
 
-      process.env.ZOHO_ACCESS_TOKEN = response.data.access_token;
+      if (response.data.refresh_token) {
+        this.refreshToken = response.data.refresh_token;
+        console.log("New refresh token received");
+      }
 
-      return response.data.access_token;
+      return this.accessToken;
     } catch (error) {
       console.error("Token refresh failed:", {
         status: error.response?.status,
@@ -111,52 +114,61 @@ class ZohoService {
     };
   }
 
-  // Create candidate in Zoho Recruit
-  async createCandidate(candidateData, accessToken) {
-    try {
-      const zohoData = this.mapToZohoFields(candidateData);
+  async createCandidate(candidateData) {
+    console.log("Creating candidate in Zoho Recruit...");
 
+    // If no access token, refresh first
+    if (!this.accessToken) {
+      console.log("No access token available, refreshing...");
+      try {
+        await this.refreshAccessToken(this.refreshToken);
+      } catch (error) {
+        console.error("Initial token refresh failed:", error.message);
+        throw new Error("Unable to obtain access token");
+      }
+    }
+
+    try {
       const response = await axios.post(
-        `${this.baseUrl}/Candidates`,
+        "https://recruit.zoho.in/recruit/v2/Candidates",
         {
-          data: [zohoData],
+          data: [candidateData],
         },
         {
           headers: {
-            Authorization: `Zoho-oauthtoken ${accessToken}`,
+            Authorization: `Zoho-oauthtoken ${this.accessToken}`,
             "Content-Type": "application/json",
           },
         },
       );
 
+      console.log("Candidate created successfully");
       return response.data;
     } catch (error) {
       if (error.response?.status === 401) {
-        // Token expired, refresh and retry
         console.log("Token expired, refreshing...");
-
-        // Debug refresh token availability
-        console.log("About to refresh token...");
-        console.log(
-          "Refresh token from env:",
-          process.env.ZOHO_REFRESH_TOKEN ? "EXISTS" : "MISSING",
-        );
-        console.log(
-          "First 20 chars:",
-          process.env.ZOHO_REFRESH_TOKEN?.substring(0, 20),
-        );
-
-        const newToken = await this.refreshAccessToken(
-          process.env.ZOHO_REFRESH_TOKEN,
-        );
+        await this.refreshAccessToken(this.refreshToken);
 
         // Retry with new token
-        return this.createCandidate(candidateData, newToken);
+        const retryResponse = await axios.post(
+          "https://recruit.zoho.in/recruit/v2/Candidates",
+          {
+            data: [candidateData],
+          },
+          {
+            headers: {
+              Authorization: `Zoho-oauthtoken ${this.accessToken}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        return retryResponse.data;
       }
-      console.error("Zoho API Error:", error.response?.data || error);
+
       throw error;
     }
   }
 }
 
-module.exports = new ZohoService();
+module.exports = ZohoService;
