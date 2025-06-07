@@ -7,19 +7,33 @@ class ZohoService {
 
   // Get user's Zoho credentials from database (placeholder for now)
   async getUserCredentials(userId) {
-    // TODO: Fetch from database
-    // For now, return test credentials
-    return {
-      access_token: process.env.ZOHO_ACCESS_TOKEN,
-      api_domain: "https://recruit.zoho.com",
-    };
+    try {
+      // Try using existing access token first
+      const accessToken = process.env.ZOHO_ACCESS_TOKEN;
+
+      // For now, return static credentials
+      // In production, this would fetch from database per user
+      return {
+        access_token: accessToken,
+        api_domain: "https://recruit.zoho.in",
+      };
+    } catch (error) {
+      // If token expired, refresh it
+      const newToken = await this.refreshAccessToken(
+        process.env.ZOHO_REFRESH_TOKEN,
+      );
+      return {
+        access_token: newToken,
+        api_domain: "https://recruit.zoho.in",
+      };
+    }
   }
 
   // Refresh access token if needed
   async refreshAccessToken(refreshToken) {
     try {
       const response = await axios.post(
-        "https://accounts.zoho.com/oauth/v2/token",
+        "https://accounts.zoho.in/oauth/v2/token",
         {
           refresh_token: refreshToken,
           client_id: process.env.ZOHO_CLIENT_ID,
@@ -27,6 +41,10 @@ class ZohoService {
           grant_type: "refresh_token",
         },
       );
+
+      // Optionally update the access token in env var
+      process.env.ZOHO_ACCESS_TOKEN = response.data.access_token;
+
       return response.data.access_token;
     } catch (error) {
       console.error("Token refresh error:", error);
@@ -79,6 +97,16 @@ class ZohoService {
 
       return response.data;
     } catch (error) {
+      if (error.response?.status === 401) {
+        // Token expired, refresh and retry
+        console.log("Token expired, refreshing...");
+        const newToken = await this.refreshAccessToken(
+          process.env.ZOHO_REFRESH_TOKEN,
+        );
+
+        // Retry with new token
+        return this.createCandidate(candidateData, newToken);
+      }
       console.error("Zoho API Error:", error.response?.data || error);
       throw error;
     }
