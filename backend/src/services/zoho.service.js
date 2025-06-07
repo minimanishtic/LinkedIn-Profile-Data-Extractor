@@ -183,6 +183,22 @@ class ZohoService {
         },
       );
 
+      console.log("Zoho API Response Status:", response.status);
+      console.log(
+        "Zoho API Response Data:",
+        JSON.stringify(response.data, null, 2),
+      );
+
+      // Check if candidate was actually created
+      if (response.data && response.data.data && response.data.data[0]) {
+        console.log(
+          "Candidate created with ID:",
+          response.data.data[0].details?.id,
+        );
+      } else {
+        console.log("Warning: No candidate ID in response");
+      }
+
       console.log("Candidate created successfully");
       return response.data;
     } catch (error) {
