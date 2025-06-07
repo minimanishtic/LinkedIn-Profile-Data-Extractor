@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.53.0",
     "@google-cloud/vision": "^5.2.0",
     "axios": "^1.9.0",
     "bcryptjs": "^3.0.2",

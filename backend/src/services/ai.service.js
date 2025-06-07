@@ -1,19 +1,19 @@
-const OpenAI = require("openai");
+const Anthropic = require("@anthropic-ai/sdk");
 
 class AIService {
   constructor() {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+    this.anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
     });
   }
 
   async parseLinkedInProfile(ocrText) {
     try {
-      console.log("Parsing LinkedIn profile with AI...");
+      console.log("Parsing LinkedIn profile with Claude AI...");
 
-      const prompt = `Extract the following information from this LinkedIn profile text and return as JSON:
+      const prompt = `Extract the following information from this LinkedIn profile text and return ONLY a JSON object with these fields:
       - first_name
-      - last_name
+      - last_name  
       - email
       - phone
       - current_employer
@@ -29,16 +29,21 @@ class AIService {
       OCR Text:
       ${ocrText}
       
-      Return only valid JSON, no additional text.`;
+      Return ONLY the JSON object, no markdown, no explanation, just pure JSON.`;
 
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.3,
+      const response = await this.anthropic.messages.create({
+        model: "claude-3-haiku-20240307",
         max_tokens: 1000,
+        temperature: 0,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
       });
 
-      const responseText = completion.choices[0].message.content;
+      const responseText = response.content[0].text;
       return JSON.parse(responseText);
     } catch (error) {
       console.error("AI Parsing Error:", error);
