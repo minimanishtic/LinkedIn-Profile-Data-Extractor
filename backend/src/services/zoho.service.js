@@ -39,40 +39,49 @@ class ZohoService {
 
   // Refresh access token if needed
   async refreshAccessToken(refreshToken) {
+    console.log("Attempting to refresh token...");
+    console.log(
+      "Refresh token:",
+      refreshToken ? refreshToken.substring(0, 20) + "..." : "NO REFRESH TOKEN",
+    );
+
+    if (!refreshToken) {
+      throw new Error("Refresh token is missing");
+    }
+
+    // Create URLSearchParams for form-encoded data
+    const params = new URLSearchParams();
+    params.append("refresh_token", refreshToken);
+    params.append("client_id", process.env.ZOHO_CLIENT_ID);
+    params.append("client_secret", process.env.ZOHO_CLIENT_SECRET);
+    params.append("grant_type", "refresh_token");
+
     try {
-      console.log("Attempting to refresh token...");
-      console.log(
-        "Refresh token:",
-        refreshToken
-          ? `${refreshToken.substring(0, 20)}...`
-          : "NO REFRESH TOKEN",
-      );
-      console.log("Client ID:", process.env.ZOHO_CLIENT_ID ? "Set" : "Missing");
-      console.log(
-        "Client Secret:",
-        process.env.ZOHO_CLIENT_SECRET ? "Set" : "Missing",
-      );
-
-      const requestBody = {
-        refresh_token: refreshToken,
-        client_id: process.env.ZOHO_CLIENT_ID,
-        client_secret: process.env.ZOHO_CLIENT_SECRET,
-        grant_type: "refresh_token",
-      };
-
-      console.log("Request body:", JSON.stringify(requestBody, null, 2));
-
       const response = await axios.post(
         "https://accounts.zoho.in/oauth/v2/token",
-        requestBody,
+        params.toString(), // Convert URLSearchParams to string
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
       );
 
-      console.log("Token refreshed successfully");
+      console.log("Token refresh successful!");
+      console.log(
+        "New access token received:",
+        response.data.access_token ? "Yes" : "No",
+      );
+
       process.env.ZOHO_ACCESS_TOKEN = response.data.access_token;
 
       return response.data.access_token;
     } catch (error) {
-      console.error("Token refresh error:", error.response?.data || error);
+      console.error("Token refresh failed:", {
+        status: error.response?.status,
+        error: error.response?.data?.error,
+        error_description: error.response?.data?.error_description,
+      });
       throw error;
     }
   }
