@@ -12,7 +12,16 @@ class ZohoService {
 
     console.log("ZohoService initialized:", {
       hasAccessToken: !!this.accessToken,
+      accessTokenValue:
+        this.accessToken === "undefined"
+          ? "STRING_UNDEFINED"
+          : this.accessToken
+            ? "EXISTS"
+            : "NULL",
       hasRefreshToken: !!this.refreshToken,
+      refreshTokenPreview: this.refreshToken
+        ? this.refreshToken.substring(0, 20) + "..."
+        : "MISSING",
       hasClientId: !!this.clientId,
       hasClientSecret: !!this.clientSecret,
     });
@@ -116,19 +125,28 @@ class ZohoService {
 
   async createCandidate(candidateData) {
     console.log("Creating candidate in Zoho Recruit...");
+    console.log(
+      "Current access token:",
+      this.accessToken ? "EXISTS" : "MISSING",
+    );
 
-    // If no access token, refresh first
-    if (!this.accessToken) {
-      console.log("No access token available, refreshing...");
+    // Check if we need to refresh the token
+    if (!this.accessToken || this.accessToken === "undefined") {
+      console.log("No valid access token, refreshing...");
       try {
         await this.refreshAccessToken(this.refreshToken);
+        console.log(
+          "Token refreshed successfully, new token:",
+          this.accessToken ? "OBTAINED" : "FAILED",
+        );
       } catch (error) {
-        console.error("Initial token refresh failed:", error.message);
-        throw new Error("Unable to obtain access token");
+        console.error("Failed to refresh token:", error.message);
+        throw new Error("Unable to obtain access token: " + error.message);
       }
     }
 
     try {
+      console.log("Making API call to create candidate...");
       const response = await axios.post(
         "https://recruit.zoho.in/recruit/v2/Candidates",
         {
@@ -146,7 +164,7 @@ class ZohoService {
       return response.data;
     } catch (error) {
       if (error.response?.status === 401) {
-        console.log("Token expired, refreshing...");
+        console.log("Token expired (401), attempting refresh...");
         await this.refreshAccessToken(this.refreshToken);
 
         // Retry with new token
@@ -166,6 +184,10 @@ class ZohoService {
         return retryResponse.data;
       }
 
+      console.error(
+        "Error creating candidate:",
+        error.response?.data || error.message,
+      );
       throw error;
     }
   }
