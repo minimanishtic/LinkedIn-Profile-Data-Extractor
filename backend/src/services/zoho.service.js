@@ -52,11 +52,16 @@ class ZohoService {
   }
 
   async refreshAccessToken(refreshToken) {
-    console.log("Attempting to refresh token...");
+    console.log("=== TOKEN REFRESH DEBUG ===");
     console.log(
-      "Refresh token:",
-      refreshToken ? refreshToken.substring(0, 20) + "..." : "NO REFRESH TOKEN",
+      "Input refresh token:",
+      refreshToken ? `${refreshToken.substring(0, 30)}...` : "MISSING",
     );
+    console.log(
+      "Client ID:",
+      this.clientId ? `${this.clientId.substring(0, 20)}...` : "MISSING",
+    );
+    console.log("Client Secret:", this.clientSecret ? "SET" : "MISSING");
 
     if (!refreshToken) {
       throw new Error("Refresh token is missing");
@@ -68,10 +73,20 @@ class ZohoService {
     params.append("client_secret", this.clientSecret);
     params.append("grant_type", "refresh_token");
 
+    // Log what we're sending
+    console.log("Request params:");
+    for (const [key, value] of params.entries()) {
+      if (key === "refresh_token" || key === "client_secret") {
+        console.log(`  ${key}: ${value.substring(0, 20)}...`);
+      } else {
+        console.log(`  ${key}: ${value}`);
+      }
+    }
+
     try {
       const response = await axios.post(
         "https://accounts.zoho.in/oauth/v2/token",
-        params, // CHANGE: Pass URLSearchParams object directly, NOT params.toString()
+        params,
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -79,15 +94,11 @@ class ZohoService {
         },
       );
 
-      console.log("Token refresh response:", {
-        status: response.status,
-        hasAccessToken: !!response.data.access_token,
-        data: response.data,
-      });
+      console.log("Token refresh successful!");
+      console.log("Response:", JSON.stringify(response.data, null, 2));
 
       if (response.data.access_token) {
         this.accessToken = response.data.access_token;
-        console.log("Access token updated successfully");
 
         if (response.data.refresh_token) {
           this.refreshToken = response.data.refresh_token;
@@ -96,14 +107,16 @@ class ZohoService {
 
         return this.accessToken;
       } else {
-        console.error("Zoho error response:", response.data);
         throw new Error(response.data.error || "No access token received");
       }
     } catch (error) {
-      console.error("Token refresh failed:", {
-        message: error.message,
-        response: error.response?.data,
-      });
+      if (error.response) {
+        console.error(
+          "Zoho API Error Response:",
+          JSON.stringify(error.response.data, null, 2),
+        );
+        throw new Error(error.response.data.error || "Token refresh failed");
+      }
       throw error;
     }
   }
