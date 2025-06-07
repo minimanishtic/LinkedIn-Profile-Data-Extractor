@@ -2,7 +2,7 @@ const axios = require("axios");
 
 class ZohoService {
   constructor() {
-    this.baseUrl = "https://recruit.zoho.com/recruit/v2";
+    this.baseUrl = "https://recruit.zoho.in/recruit/v2";
   }
 
   // Get user's Zoho credentials from database (placeholder for now)
