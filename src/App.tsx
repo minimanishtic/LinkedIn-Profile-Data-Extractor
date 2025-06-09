@@ -27,6 +27,7 @@ function App() {
 
           {/* SaaS Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/upload" element={<SingleUserApp />} />
 
           {/* Add this before any catchall route */}
           {import.meta.env.VITE_TEMPO === "true" && (

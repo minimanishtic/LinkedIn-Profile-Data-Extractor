@@ -80,6 +80,50 @@ export type Database = {
         }
         Relationships: []
       }
+      zoho_connections: {
+        Row: {
+          api_token: string | null
+          created_at: string | null
+          custom_fields: Json | null
+          id: string
+          is_active: boolean | null
+          portal_id: string | null
+          updated_at: string | null
+          user_id: string
+          webhook_url: string
+        }
+        Insert: {
+          api_token?: string | null
+          created_at?: string | null
+          custom_fields?: Json | null
+          id?: string
+          is_active?: boolean | null
+          portal_id?: string | null
+          updated_at?: string | null
+          user_id: string
+          webhook_url: string
+        }
+        Update: {
+          api_token?: string | null
+          created_at?: string | null
+          custom_fields?: Json | null
+          id?: string
+          is_active?: boolean | null
+          portal_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+          webhook_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zoho_connections_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
