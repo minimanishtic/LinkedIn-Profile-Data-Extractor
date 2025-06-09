@@ -3,6 +3,9 @@ import { Routes, Route } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import SaasLanding from "./components/SaasLanding";
 import SingleUserApp from "./components/SingleUserApp";
+import SignupPage from "./components/Auth/SignupPage";
+import LoginPage from "./components/Auth/LoginPage";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
@@ -16,9 +19,12 @@ function App() {
           {/* Single User App - Preserved existing functionality */}
           <Route path="/app/single-user" element={<SingleUserApp />} />
 
-          {/* Future SaaS routes will go here */}
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          {/* <Route path="/auth/*" element={<AuthRoutes />} /> */}
+          {/* SaaS Authentication Routes */}
+          <Route path="/auth/signup" element={<SignupPage />} />
+          <Route path="/auth/login" element={<LoginPage />} />
+
+          {/* SaaS Dashboard */}
+          <Route path="/dashboard" element={<Dashboard />} />
 
           {/* Add this before any catchall route */}
           {import.meta.env.VITE_TEMPO === "true" && (

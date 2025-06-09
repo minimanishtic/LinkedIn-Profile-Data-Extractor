@@ -22,8 +22,12 @@ export default function SaasLanding() {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost">Sign In</Button>
-              <Button>Get Started</Button>
+              <Button variant="ghost" asChild>
+                <a href="/auth/login">Sign In</a>
+              </Button>
+              <Button asChild>
+                <a href="/auth/signup">Get Started</a>
+              </Button>
             </div>
           </div>
         </div>
@@ -45,13 +49,11 @@ export default function SaasLanding() {
             data extraction.
           </p>
           <div className="flex justify-center space-x-4">
-            <Button size="lg" className="px-8 py-3">
-              Start Free Trial
+            <Button size="lg" className="px-8 py-3" asChild>
+              <a href="/auth/signup">Start Free Trial</a>
             </Button>
-            <Button variant="outline" size="lg" className="px-8 py-3">
-              <a href="/app/single-user" className="flex items-center">
-                Try Single-User Version
-              </a>
+            <Button variant="outline" size="lg" className="px-8 py-3" asChild>
+              <a href="/app/single-user">Try Single-User Version</a>
             </Button>
           </div>
         </div>
@@ -142,7 +144,9 @@ export default function SaasLanding() {
                     Email support
                   </li>
                 </ul>
-                <Button className="w-full mt-6">Get Started</Button>
+                <Button className="w-full mt-6" asChild>
+                  <a href="/auth/signup">Get Started</a>
+                </Button>
               </CardContent>
             </Card>
 
@@ -173,7 +177,9 @@ export default function SaasLanding() {
                     Priority support
                   </li>
                 </ul>
-                <Button className="w-full mt-6">Get Started</Button>
+                <Button className="w-full mt-6" asChild>
+                  <a href="/auth/signup">Get Started</a>
+                </Button>
               </CardContent>
             </Card>
 
