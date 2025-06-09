@@ -38,6 +38,8 @@ export default function SignupPage() {
             full_name: fullName,
             company: company,
           },
+          emailRedirectTo:
+            "https://serene-jackson7-jqhyw.view-3.tempo-dev.app/auth/callback",
         },
       });
 

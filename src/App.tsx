@@ -5,6 +5,7 @@ import SaasLanding from "./components/SaasLanding";
 import SingleUserApp from "./components/SingleUserApp";
 import SignupPage from "./components/Auth/SignupPage";
 import LoginPage from "./components/Auth/LoginPage";
+import AuthCallback from "./components/Auth/AuthCallback";
 import Dashboard from "./components/Dashboard";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           {/* SaaS Authentication Routes */}
           <Route path="/auth/signup" element={<SignupPage />} />
           <Route path="/auth/login" element={<LoginPage />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* SaaS Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
