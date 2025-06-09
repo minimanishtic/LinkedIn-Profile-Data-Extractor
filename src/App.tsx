@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
-import Home from "./components/home";
+import SaasLanding from "./components/SaasLanding";
+import SingleUserApp from "./components/SingleUserApp";
 
 function App() {
   return (
@@ -9,7 +10,16 @@ function App() {
       <div>
         <Analytics />
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* SaaS Landing Page */}
+          <Route path="/" element={<SaasLanding />} />
+
+          {/* Single User App - Preserved existing functionality */}
+          <Route path="/app/single-user" element={<SingleUserApp />} />
+
+          {/* Future SaaS routes will go here */}
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          {/* <Route path="/auth/*" element={<AuthRoutes />} /> */}
+
           {/* Add this before any catchall route */}
           {import.meta.env.VITE_TEMPO === "true" && (
             <Route path="/tempobook/*" />
