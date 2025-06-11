@@ -24,6 +24,7 @@ function App() {
           <Route path="/auth/signup" element={<SignupPage />} />
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/auth/zoho/callback" element={<AuthCallback />} />
 
           {/* SaaS Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />

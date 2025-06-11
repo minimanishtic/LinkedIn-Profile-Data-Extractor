@@ -135,10 +135,22 @@ export default function Dashboard() {
   };
 
   const handleZohoConnection = async () => {
-    if (!user || !clientId || !clientSecret) return;
+    console.log("handleZohoConnection called");
+    console.log("User:", user?.id);
+    console.log("Client ID:", clientId);
+    console.log("Client Secret:", clientSecret ? "[PROVIDED]" : "[MISSING]");
+
+    if (!user || !clientId || !clientSecret) {
+      console.log("Missing required data - user, clientId, or clientSecret");
+      alert("Please provide both Client ID and Client Secret");
+      return;
+    }
 
     setIsConnecting(true);
+    console.log("Starting Zoho connection process...");
+
     try {
+      console.log("Saving credentials to database...");
       // Save credentials to database
       const { data, error } = await supabase
         .from("zoho_connections")
@@ -152,15 +164,40 @@ export default function Dashboard() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Database error:", error);
+        throw error;
+      }
+
+      console.log("Credentials saved successfully:", data);
 
       // Initiate Zoho OAuth flow
       const redirectUri = `${window.location.origin}/auth/zoho/callback`;
       const scope = "ZohoRecruit.modules.ALL,ZohoRecruit.settings.ALL";
-      const zohoAuthUrl = `https://accounts.zoho.in/oauth/v2/auth?scope=${scope}&client_id=${clientId}&response_type=code&access_type=offline&redirect_uri=${encodeURIComponent(redirectUri)}&state=${user.id}`;
+      const zohoAuthUrl = `https://accounts.zoho.in/oauth/v2/auth?scope=${encodeURIComponent(scope)}&client_id=${clientId}&response_type=code&access_type=offline&redirect_uri=${encodeURIComponent(redirectUri)}&state=${user.id}`;
 
-      // Open Zoho OAuth in new window
-      window.open(zohoAuthUrl, "zoho-oauth", "width=600,height=700");
+      console.log("Redirect URI:", redirectUri);
+      console.log("Zoho Auth URL:", zohoAuthUrl);
+
+      // Test if popup blockers are preventing the window from opening
+      const newWindow = window.open(
+        zohoAuthUrl,
+        "zoho-oauth",
+        "width=600,height=700,scrollbars=yes,resizable=yes",
+      );
+
+      if (
+        !newWindow ||
+        newWindow.closed ||
+        typeof newWindow.closed == "undefined"
+      ) {
+        console.error("Popup blocked! Redirecting in same window...");
+        alert("Popup was blocked. Redirecting to Zoho authorization page...");
+        window.location.href = zohoAuthUrl;
+        return;
+      }
+
+      console.log("OAuth window opened successfully");
 
       setZohoConnection(data);
       setShowZohoConnection(false);
@@ -168,8 +205,10 @@ export default function Dashboard() {
       setClientSecret("");
     } catch (error) {
       console.error("Error connecting to Zoho:", error);
+      alert(`Error connecting to Zoho: ${error.message || "Unknown error"}`);
     } finally {
       setIsConnecting(false);
+      console.log("Connection process completed");
     }
   };
 
