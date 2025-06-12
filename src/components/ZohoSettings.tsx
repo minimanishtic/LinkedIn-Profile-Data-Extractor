@@ -20,7 +20,6 @@ interface ZohoSettingsProps {
 }
 
 export interface ZohoSettings {
-  webhookUrl: string;
   apiToken?: string;
   portalId?: string;
   customFields?: Record<string, string>;
@@ -29,7 +28,6 @@ export interface ZohoSettings {
 const ZohoSettings = ({ onSave, initialSettings }: ZohoSettingsProps) => {
   const [settings, setSettings] = useState<ZohoSettings>(
     initialSettings || {
-      webhookUrl: import.meta.env.VITE_WEBHOOK_URL || "",
       apiToken: "",
       portalId: "",
       customFields: {},
@@ -43,12 +41,6 @@ const ZohoSettings = ({ onSave, initialSettings }: ZohoSettingsProps) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSave = async () => {
-    if (!settings.webhookUrl) {
-      setErrorMessage("Webhook URL is required");
-      setSaveStatus("error");
-      return;
-    }
-
     // Clear API Token and Portal ID if they're empty strings
     const updatedSettings = {
       ...settings,
@@ -85,9 +77,8 @@ const ZohoSettings = ({ onSave, initialSettings }: ZohoSettingsProps) => {
           Zoho Recruit Settings
         </CardTitle>
         <CardDescription>
-          Configure your integration settings. Only the Webhook URL is required.
-          API Token and Portal ID are optional and only needed for direct Zoho
-          Recruit API integration.
+          Configure your integration settings. These fields are optional and
+          only needed for direct Zoho Recruit API integration.
         </CardDescription>
       </CardHeader>
 
@@ -98,25 +89,6 @@ const ZohoSettings = ({ onSave, initialSettings }: ZohoSettingsProps) => {
           transition={{ duration: 0.3 }}
           className="space-y-6"
         >
-          <div className="space-y-3">
-            <Label htmlFor="webhookUrl" className="text-base font-medium">
-              Webhook URL <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="webhookUrl"
-              placeholder="Your webhook URL"
-              value={settings.webhookUrl}
-              onChange={(e) =>
-                setSettings({ ...settings, webhookUrl: e.target.value })
-              }
-              className="w-full border-2 rounded-xl py-3 px-4 text-base focus-visible:ring-0 focus-visible:ring-offset-0 border-muted"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1 pl-1">
-              The webhook URL that will receive the profile data (required)
-            </p>
-          </div>
-
           <div className="space-y-3">
             <Label htmlFor="apiToken" className="text-base font-medium">
               API Token (Optional)

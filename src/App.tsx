@@ -6,6 +6,7 @@ import SingleUserApp from "./components/SingleUserApp";
 import SignupPage from "./components/Auth/SignupPage";
 import LoginPage from "./components/Auth/LoginPage";
 import AuthCallback from "./components/Auth/AuthCallback";
+import ZohoCallback from "./components/Auth/ZohoCallback";
 import Dashboard from "./components/Dashboard";
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
           <Route path="/auth/signup" element={<SignupPage />} />
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
-          <Route path="/auth/zoho/callback" element={<AuthCallback />} />
+          <Route path="/auth/zoho/callback" element={<ZohoCallback />} />
 
           {/* SaaS Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />

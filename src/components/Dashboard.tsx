@@ -114,16 +114,12 @@ export default function Dashboard() {
     try {
       const { data, error } = await supabase
         .from("zoho_connections")
-        .upsert({
-          user_id: user.id,
-          webhook_url: settings.webhookUrl || "",
+        .update({
           api_token: settings.apiToken || null,
           portal_id: settings.portalId || null,
           custom_fields: settings.customFields || {},
-          is_active: true,
-          api_domain: "https://www.zohoapis.in",
-          connected_at: new Date().toISOString(),
         })
+        .eq("user_id", user.id)
         .select()
         .single();
 
@@ -138,80 +134,38 @@ export default function Dashboard() {
   };
 
   const handleZohoConnection = async () => {
-    console.log("handleZohoConnection called");
-    console.log("User:", user?.id);
-    console.log("Client ID:", clientId);
-    console.log("Client Secret:", clientSecret ? "[PROVIDED]" : "[MISSING]");
-
     if (!user || !clientId || !clientSecret) {
-      console.log("Missing required data - user, clientId, or clientSecret");
       alert("Please provide both Client ID and Client Secret");
       return;
     }
 
     setIsConnecting(true);
-    console.log("Starting Zoho connection process...");
 
     try {
-      console.log("Saving credentials to database...");
-      // Save credentials to database
-      const { data, error } = await supabase
-        .from("zoho_connections")
-        .upsert({
-          user_id: user.id,
-          client_id: clientId,
-          client_secret: clientSecret,
-          api_domain: "https://www.zohoapis.in",
-          is_active: true,
-        })
-        .select()
-        .single();
+      // Save credentials to database first (without tokens)
+      const { error } = await supabase.from("zoho_connections").upsert({
+        user_id: user.id,
+        client_id: clientId,
+        client_secret: clientSecret,
+        api_domain: "https://www.zohoapis.in",
+        is_active: false, // Will be set to true after successful OAuth
+      });
 
       if (error) {
-        console.error("Database error:", error);
         throw error;
       }
 
-      console.log("Credentials saved successfully:", data);
-
-      // Initiate Zoho OAuth flow
+      // Generate Zoho OAuth URL
       const redirectUri = `${window.location.origin}/auth/zoho/callback`;
-      const scope = "ZohoRecruit.modules.ALL,ZohoRecruit.settings.ALL";
-      const zohoAuthUrl = `https://accounts.zoho.in/oauth/v2/auth?scope=${encodeURIComponent(scope)}&client_id=${clientId}&response_type=code&access_type=offline&redirect_uri=${encodeURIComponent(redirectUri)}&state=${user.id}`;
+      const scope = "ZohoRecruit.modules.ALL";
+      const zohoAuthUrl = `https://accounts.zoho.in/oauth/v2/auth?response_type=code&client_id=${clientId}&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(redirectUri)}&access_type=offline&state=${user.id}`;
 
-      console.log("Redirect URI:", redirectUri);
-      console.log("Zoho Auth URL:", zohoAuthUrl);
-
-      // Test if popup blockers are preventing the window from opening
-      const newWindow = window.open(
-        zohoAuthUrl,
-        "zoho-oauth",
-        "width=600,height=700,scrollbars=yes,resizable=yes",
-      );
-
-      if (
-        !newWindow ||
-        newWindow.closed ||
-        typeof newWindow.closed == "undefined"
-      ) {
-        console.error("Popup blocked! Redirecting in same window...");
-        alert("Popup was blocked. Redirecting to Zoho authorization page...");
-        window.location.href = zohoAuthUrl;
-        return;
-      }
-
-      console.log("OAuth window opened successfully");
-
-      setZohoConnection(data);
-      setShowZohoConnection(false);
-      setClientId("");
-      setClientSecret("");
+      // Redirect to Zoho OAuth
+      window.location.href = zohoAuthUrl;
     } catch (error) {
-      console.error("Error connecting to Zoho:", error);
+      console.error("Error starting Zoho connection:", error);
       alert(`Error connecting to Zoho: ${error.message || "Unknown error"}`);
-    } finally {
       setIsConnecting(false);
-      console.log("Connection process completed");
     }
   };
 
@@ -500,7 +454,6 @@ export default function Dashboard() {
             initialSettings={
               zohoConnection
                 ? {
-                    webhookUrl: zohoConnection.webhook_url || "",
                     apiToken: zohoConnection.api_token || "",
                     portalId: zohoConnection.portal_id || "",
                     customFields: zohoConnection.custom_fields || {},
