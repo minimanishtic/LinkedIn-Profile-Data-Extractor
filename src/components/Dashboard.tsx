@@ -116,11 +116,13 @@ export default function Dashboard() {
         .from("zoho_connections")
         .upsert({
           user_id: user.id,
-          webhook_url: settings.webhookUrl,
+          webhook_url: settings.webhookUrl || "",
           api_token: settings.apiToken || null,
           portal_id: settings.portalId || null,
           custom_fields: settings.customFields || {},
           is_active: true,
+          api_domain: "https://www.zohoapis.in",
+          connected_at: new Date().toISOString(),
         })
         .select()
         .single();
@@ -131,6 +133,7 @@ export default function Dashboard() {
       setShowZohoSettings(false);
     } catch (error) {
       console.error("Error saving Zoho settings:", error);
+      alert(`Error saving Zoho settings: ${error.message || "Unknown error"}`);
     }
   };
 
@@ -497,10 +500,10 @@ export default function Dashboard() {
             initialSettings={
               zohoConnection
                 ? {
-                    webhookUrl: zohoConnection.webhook_url,
+                    webhookUrl: zohoConnection.webhook_url || "",
                     apiToken: zohoConnection.api_token || "",
                     portalId: zohoConnection.portal_id || "",
-                    customFields: {},
+                    customFields: zohoConnection.custom_fields || {},
                   }
                 : undefined
             }

@@ -82,34 +82,52 @@ export type Database = {
       }
       zoho_connections: {
         Row: {
+          api_domain: string | null
           api_token: string | null
+          client_id: string | null
+          client_secret: string | null
+          connected_at: string | null
           created_at: string | null
           custom_fields: Json | null
           id: string
           is_active: boolean | null
+          last_used: string | null
           portal_id: string | null
+          refresh_token: string | null
           updated_at: string | null
           user_id: string
           webhook_url: string
         }
         Insert: {
+          api_domain?: string | null
           api_token?: string | null
+          client_id?: string | null
+          client_secret?: string | null
+          connected_at?: string | null
           created_at?: string | null
           custom_fields?: Json | null
           id?: string
           is_active?: boolean | null
+          last_used?: string | null
           portal_id?: string | null
+          refresh_token?: string | null
           updated_at?: string | null
           user_id: string
           webhook_url: string
         }
         Update: {
+          api_domain?: string | null
           api_token?: string | null
+          client_id?: string | null
+          client_secret?: string | null
+          connected_at?: string | null
           created_at?: string | null
           custom_fields?: Json | null
           id?: string
           is_active?: boolean | null
+          last_used?: string | null
           portal_id?: string | null
+          refresh_token?: string | null
           updated_at?: string | null
           user_id?: string
           webhook_url?: string
