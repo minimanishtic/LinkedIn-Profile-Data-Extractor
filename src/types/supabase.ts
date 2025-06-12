@@ -96,7 +96,6 @@ export type Database = {
           refresh_token: string | null
           updated_at: string | null
           user_id: string
-          webhook_url: string
         }
         Insert: {
           api_domain?: string | null
@@ -113,7 +112,6 @@ export type Database = {
           refresh_token?: string | null
           updated_at?: string | null
           user_id: string
-          webhook_url: string
         }
         Update: {
           api_domain?: string | null
@@ -130,17 +128,8 @@ export type Database = {
           refresh_token?: string | null
           updated_at?: string | null
           user_id?: string
-          webhook_url?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "zoho_connections_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
